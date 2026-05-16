@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Colours — Ariadne Design System</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="ds.css">
+</head>
+<body>
+  <nav class="ds-nav">
+    <a class="ds-home" href="index.html">Ariadne</a>
+    <a href="logo.html">Logo</a>
+    <a href="colours.html" aria-current>Colours</a>
+    <a href="typography.html">Typography</a>
+    <a href="spacing.html">Spacing &amp; layout</a>
+    <a href="motion.html">Motion</a>
+  </nav>
+
+  <h1>Colours</h1>
+  <p class="lede">A near-black canvas, warm paper text, and a bloom of warm light that shifts as you scroll.</p>
+
+  <h2>Core palette</h2>
+  <p>The default theme (internally <code>aurora</code>). The three <code>warm-*</code> values are gradient stops in the background bloom, not flat fills.</p>
+  <div class="grid">
+    <div class="card"><div class="sw" style="background:#06070d"></div><div class="meta"><b>--ink</b><span class="hex">#06070d</span><div class="use">Canvas / background</div></div></div>
+    <div class="card"><div class="sw" style="background:#f1ebde"></div><div class="meta"><b>--ink-soft</b><span class="hex">#f1ebde</span><div class="use">Primary text (paper)</div></div></div>
+    <div class="card"><div class="sw" style="background:#ff9d6a"></div><div class="meta"><b>--accent</b><span class="hex">#ff9d6a</span><div class="use">Interactive / emphasis</div></div></div>
+    <div class="card"><div class="sw" style="background:#ffd2a8"></div><div class="meta"><b>--spark</b><span class="hex">#ffd2a8</span><div class="use">Highlight glow</div></div></div>
+    <div class="card"><div class="sw" style="background:#ff9450"></div><div class="meta"><b>--warm-bot</b><span class="hex">#ff9450</span><div class="use">Bloom — base</div></div></div>
+    <div class="card"><div class="sw" style="background:#d24a8a"></div><div class="meta"><b>--warm-mid</b><span class="hex">#d24a8a</span><div class="use">Bloom — mid</div></div></div>
+    <div class="card"><div class="sw" style="background:#1c1d3a"></div><div class="meta"><b>--warm-top</b><span class="hex">#1c1d3a</span><div class="use">Bloom — top</div></div></div>
+    <div class="card"><div class="sw" style="background:linear-gradient(0deg,#ff9450,#d24a8a,#1c1d3a)"></div><div class="meta"><b>The bloom</b><span class="hex">bot → mid → top</span><div class="use">Composited background light</div></div></div>
+  </div>
+
+  <h2>Surface set — text &amp; rules on dark</h2>
+  <p>Opacity steps of the paper colour. Used for body copy, captions and the hairline borders inside product UI.</p>
+  <table>
+    <tr><th>Token</th><th>Value</th><th>Role</th></tr>
+    <tr><td><span class="chip" style="background:#f1ebde"></span><code>--ink-2</code></td><td><code>#f1ebde</code></td><td>Headings / primary</td></tr>
+    <tr><td><span class="chip" style="background:rgba(241,235,222,0.72)"></span><code>--ink-2-mid</code></td><td><code>rgba(241,235,222,.72)</code></td><td>Body copy</td></tr>
+    <tr><td><span class="chip" style="background:rgba(241,235,222,0.42)"></span><code>--ink-2-low</code></td><td><code>rgba(241,235,222,.42)</code></td><td>Captions / labels</td></tr>
+    <tr><td><span class="chip" style="background:rgba(241,235,222,0.10)"></span><code>--rule</code></td><td><code>rgba(241,235,222,.10)</code></td><td>Hairline borders</td></tr>
+    <tr><td><span class="chip" style="background:#160a02"></span><code>--selection-ink</code></td><td><code>#160a02</code></td><td>Text on ::selection</td></tr>
+  </table>
+
+  <h2>Scroll-driven palettes</h2>
+  <p>The page cross-fades through these as sections advance — set on <code>body[data-palette="…"]</code>. <code>aurora</code> is also the default <code>:root</code>.</p>
+  <table>
+    <tr><th>Palette</th><th>ink</th><th>warm-bot</th><th>warm-mid</th><th>warm-top</th><th>spark</th><th>accent</th></tr>
+    <tr><td>aurora <em>(default)</em></td><td><span class="chip" style="background:#06070d"></span>06070d</td><td><span class="chip" style="background:#ff9450"></span>ff9450</td><td><span class="chip" style="background:#d24a8a"></span>d24a8a</td><td><span class="chip" style="background:#1c1d3a"></span>1c1d3a</td><td><span class="chip" style="background:#ffd2a8"></span>ffd2a8</td><td><span class="chip" style="background:#ff9d6a"></span>ff9d6a</td></tr>
+    <tr><td>ember</td><td><span class="chip" style="background:#0a0907"></span>0a0907</td><td><span class="chip" style="background:#f0b35a"></span>f0b35a</td><td><span class="chip" style="background:#c98032"></span>c98032</td><td><span class="chip" style="background:#1a1208"></span>1a1208</td><td><span class="chip" style="background:#ffd687"></span>ffd687</td><td><span class="chip" style="background:#e3a85e"></span>e3a85e</td></tr>
+    <tr><td>dawn</td><td><span class="chip" style="background:#08060e"></span>08060e</td><td><span class="chip" style="background:#ffb05a"></span>ffb05a</td><td><span class="chip" style="background:#d96a52"></span>d96a52</td><td><span class="chip" style="background:#2a1430"></span>2a1430</td><td><span class="chip" style="background:#ffd6a0"></span>ffd6a0</td><td><span class="chip" style="background:#ff9a6c"></span>ff9a6c</td></tr>
+    <tr><td>twilight</td><td><span class="chip" style="background:#07071a"></span>07071a</td><td><span class="chip" style="background:#b09ce6"></span>b09ce6</td><td><span class="chip" style="background:#6a4ec7"></span>6a4ec7</td><td><span class="chip" style="background:#14133a"></span>14133a</td><td><span class="chip" style="background:#e3d6ff"></span>e3d6ff</td><td><span class="chip" style="background:#a78bff"></span>a78bff</td></tr>
+    <tr><td>verdigris</td><td><span class="chip" style="background:#050d0c"></span>050d0c</td><td><span class="chip" style="background:#6cc2a3"></span>6cc2a3</td><td><span class="chip" style="background:#3c8a7b"></span>3c8a7b</td><td><span class="chip" style="background:#0c1f1c"></span>0c1f1c</td><td><span class="chip" style="background:#c6f0dc"></span>c6f0dc</td><td><span class="chip" style="background:#7ad2b0"></span>7ad2b0</td></tr>
+    <tr><td>rose</td><td><span class="chip" style="background:#0e0608"></span>0e0608</td><td><span class="chip" style="background:#f4cba8"></span>f4cba8</td><td><span class="chip" style="background:#c7596f"></span>c7596f</td><td><span class="chip" style="background:#2a0e15"></span>2a0e15</td><td><span class="chip" style="background:#ffe3d4"></span>ffe3d4</td><td><span class="chip" style="background:#e98a9c"></span>e98a9c</td></tr>
+    <tr><td>ocean</td><td><span class="chip" style="background:#04070f"></span>04070f</td><td><span class="chip" style="background:#79d7e6"></span>79d7e6</td><td><span class="chip" style="background:#2a8ec4"></span>2a8ec4</td><td><span class="chip" style="background:#0a1730"></span>0a1730</td><td><span class="chip" style="background:#d3f1ff"></span>d3f1ff</td><td><span class="chip" style="background:#6cc7e3"></span>6cc7e3</td></tr>
+  </table>
+
+  <div class="note">Never hard-code a hex in a component. Reference the token — <code>color: var(--accent)</code> — so a component stays correct through every palette change.</div>
+
+  <footer>Ariadne Labs — design system · colours</footer>
+</body>
+</html>

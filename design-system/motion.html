@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Motion — Ariadne Design System</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="ds.css">
+<style>
+  .demo { display:flex; align-items:center; gap:16px; padding:16px 0; border-bottom:1px solid var(--rule); }
+  .track { flex:1; height:2px; background:var(--rule); position:relative; }
+  .dot { position:absolute; top:-6px; left:0; width:14px; height:14px; border-radius:50%; background:var(--accent);
+    box-shadow:0 0 14px color-mix(in srgb,var(--accent) 60%,transparent); }
+  .demo .tag { flex:0 0 150px; font-family:var(--sans); font-size:12px; color:var(--ink-2-low); letter-spacing:0.05em; }
+  button.replay { font-family:var(--sans); font-size:12px; color:var(--ink-2-mid); background:transparent; border:1px solid var(--rule); border-radius:var(--r-kbd); padding:6px 12px; cursor:pointer; }
+  button.replay:hover { color:var(--ink-2); border-color:var(--accent-soft); }
+  .curve { border:1px solid var(--rule); border-radius:var(--r-card); padding:20px; margin-top:18px; display:inline-block; }
+</style>
+</head>
+<body>
+  <nav class="ds-nav">
+    <a class="ds-home" href="index.html">Ariadne</a>
+    <a href="logo.html">Logo</a>
+    <a href="colours.html">Colours</a>
+    <a href="typography.html">Typography</a>
+    <a href="spacing.html">Spacing &amp; layout</a>
+    <a href="motion.html" aria-current>Motion</a>
+  </nav>
+
+  <h1>Motion</h1>
+  <p class="lede">One easing curve, used everywhere. Differences come from duration, not from swapping curves.</p>
+
+  <h2>The curve</h2>
+  <p><code>--ease: cubic-bezier(0.22, 1, 0.36, 1)</code> — a fast, confident start that settles softly. It is the only easing in the system; every transition and keyframe references it.</p>
+  <div class="curve">
+    <svg width="200" height="200" viewBox="0 0 100 100" aria-hidden="true">
+      <line x1="0" y1="100" x2="100" y2="100" stroke="rgba(241,235,222,0.15)"/>
+      <line x1="0" y1="0" x2="0" y2="100" stroke="rgba(241,235,222,0.15)"/>
+      <path d="M0 100 C 22 0, 36 0, 100 0" fill="none" stroke="var(--accent)" stroke-width="2.5"/>
+    </svg>
+  </div>
+
+  <h2>Duration bands</h2>
+  <p>Pick a band by how much the change should draw the eye. <button class="replay" id="replay">Replay all ▸</button></p>
+
+  <div class="demo"><span class="tag">Micro · 280–400ms</span><div class="track"><span class="dot" data-d="340"></span></div></div>
+  <div class="demo"><span class="tag">Standard · 500–600ms</span><div class="track"><span class="dot" data-d="560"></span></div></div>
+  <div class="demo"><span class="tag">Entrance · 900–1300ms</span><div class="track"><span class="dot" data-d="1100"></span></div></div>
+  <div class="demo"><span class="tag">Scene · 1400–2200ms</span><div class="track"><span class="dot" data-d="1800"></span></div></div>
+
+  <table>
+    <tr><th>Band</th><th>Range</th><th>For</th></tr>
+    <tr><td>Micro</td><td><code>280–400ms</code></td><td>Hover, colour, small state flips</td></tr>
+    <tr><td>Standard</td><td><code>500–600ms</code></td><td>Cards appearing, step changes</td></tr>
+    <tr><td>Entrance</td><td><code>900–1300ms</code> (often staged delays)</td><td>The brand &amp; first-paint reveal</td></tr>
+    <tr><td>Scene</td><td><code>1400–2200ms</code></td><td>Palette cross-fade, the film beats</td></tr>
+    <tr><td>Ambient</td><td><code>~22s</code> loop</td><td>The slow drifting CTA glow</td></tr>
+  </table>
+
+  <div class="note">Respect <code>prefers-reduced-motion</code>: the product disables transitions and ambient drifts entirely when the user asks for it. Any new motion must do the same.</div>
+
+  <footer>Ariadne Labs — design system · motion</footer>
+
+<script>
+  function run(){
+    document.querySelectorAll('.dot').forEach(function(d){
+      var ms = +d.dataset.d;
+      d.style.transition='none'; d.style.left='0';
+      d.getBoundingClientRect();
+      d.style.transition='left '+ms+'ms cubic-bezier(0.22,1,0.36,1)';
+      d.style.left='calc(100% - 14px)';
+    });
+  }
+  document.getElementById('replay').addEventListener('click', run);
+  setTimeout(run, 350);
+</script>
+</body>
+</html>
