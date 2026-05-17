@@ -17,7 +17,8 @@ design-system/
 ├── colours.html      ← core palette, surface set, 9 scroll-driven palettes
 ├── typography.html   ← the two typefaces + the fluid type scale
 ├── spacing.html      ← clamp() rhythm, content widths, corner radii
-└── motion.html       ← the one easing curve + duration bands
+├── motion.html       ← the one easing curve + duration bands
+└── interaction.html  ← scroll-driven stepper, puzzle nav, viz entrances, film reveal
 ```
 
 ## The one rule
