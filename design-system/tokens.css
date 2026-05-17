@@ -50,6 +50,10 @@
    themes cross-fade through these as the page scrolls.
    ------------------------------------------------------------ */
 body[data-palette="aurora"]    { --ink:#06070d; --warm-bot:#ff9450; --warm-mid:#d24a8a; --warm-top:#1c1d3a; --spark:#ffd2a8; --accent:#ff9d6a; --accent-soft:rgba(255,157,106,0.55); }
+/* parchment, espresso, burnt sienna — library at dusk */
+body[data-palette="vellum"]    { --ink:#15110b; --warm-bot:#c89668; --warm-mid:#8a4a30; --warm-top:#2a1c14; --spark:#efd9ad; --accent:#b8784a; --accent-soft:rgba(184,120,74,0.55); }
+/* newsprint, oxide, brass — cool editorial */
+body[data-palette="slate"]     { --ink:#0d0e12; --warm-bot:#9d8a72; --warm-mid:#4a4654; --warm-top:#18181f; --spark:#e6dcc4; --accent:#a78458; --accent-soft:rgba(167,132,88,0.55); }
 body[data-palette="ember"]     { --ink:#0a0907; --warm-bot:#f0b35a; --warm-mid:#c98032; --warm-top:#1a1208; --spark:#ffd687; --accent:#e3a85e; --accent-soft:rgba(227,168,94,0.55); }
 body[data-palette="dawn"]      { --ink:#08060e; --warm-bot:#ffb05a; --warm-mid:#d96a52; --warm-top:#2a1430; --spark:#ffd6a0; --accent:#ff9a6c; --accent-soft:rgba(255,154,108,0.55); }
 body[data-palette="twilight"]  { --ink:#07071a; --warm-bot:#b09ce6; --warm-mid:#6a4ec7; --warm-top:#14133a; --spark:#e3d6ff; --accent:#a78bff; --accent-soft:rgba(167,139,255,0.55); }

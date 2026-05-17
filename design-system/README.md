@@ -14,7 +14,7 @@ design-system/
 ├── tokens.css        ← single source of truth (all CSS custom properties)
 ├── ds.css            ← styling for these doc pages only (not a product file)
 ├── logo.html         ← the labyrinth mark, wordmark, lockup, clear-space, don'ts
-├── colours.html      ← core palette, surface set, 7 scroll-driven palettes
+├── colours.html      ← core palette, surface set, 9 scroll-driven palettes
 ├── typography.html   ← the two typefaces + the fluid type scale
 ├── spacing.html      ← clamp() rhythm, content widths, corner radii
 └── motion.html       ← the one easing curve + duration bands
