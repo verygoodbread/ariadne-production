@@ -12,6 +12,12 @@
       "runtimeExecutable": "python3",
       "runtimeArgs": ["-m", "http.server", "8771"],
       "port": 8771
+    },
+    {
+      "name": "ariadne-api",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["serve.py"],
+      "port": 8772
     }
   ]
 }
