@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Ariadne — Operations desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --serif:"EB Garamond",Georgia,serif; --sans:"Inter",system-ui,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,monospace;
+    --ink:#15110b; --panel:#1c1710; --panel-2:#241d14; --accent:#b8784a;
+    --fg-1:rgba(244,237,224,0.96); --fg-2:rgba(244,237,224,0.74);
+    --fg-3:rgba(244,237,224,0.5); --rule:rgba(244,237,224,0.10);
+    --ease:cubic-bezier(0.22,1,0.36,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--ink);color:var(--fg-1);font-family:var(--sans);
+    font-size:14px;line-height:1.5;min-height:100vh}
+  .bar{display:flex;align-items:baseline;gap:14px;padding:18px 28px;
+    border-bottom:1px solid var(--rule)}
+  .bar h1{font-family:var(--serif);font-size:20px;font-weight:500}
+  .bar .sub{color:var(--fg-3);font-size:12px;font-family:var(--mono)}
+  .wrap{display:grid;grid-template-columns:280px 1fr;gap:0;min-height:calc(100vh - 60px)}
+  .rail{border-right:1px solid var(--rule);padding:18px;overflow-y:auto}
+  .rail h2{font-size:11px;letter-spacing:0.08em;text-transform:uppercase;
+    color:var(--fg-3);margin-bottom:12px}
+  .proj{display:block;width:100%;text-align:left;background:var(--panel);
+    border:1px solid var(--rule);border-radius:8px;padding:11px 13px;margin-bottom:8px;
+    color:var(--fg-1);cursor:pointer;transition:border-color .2s var(--ease)}
+  .proj:hover{border-color:var(--accent)}
+  .proj.on{border-color:var(--accent);background:var(--panel-2)}
+  .proj .ref{font-family:var(--mono);font-size:12px;color:var(--accent)}
+  .proj .ti{font-family:var(--serif);font-size:15px;margin-top:2px}
+  .proj .mo{font-size:11px;color:var(--fg-3);margin-top:2px}
+  .main{padding:26px 32px;max-width:880px}
+  .ctx{color:var(--fg-3);font-size:12px;font-family:var(--mono);margin-bottom:18px}
+  .ctx b{color:var(--fg-2)}
+  textarea{width:100%;min-height:120px;background:var(--panel);color:var(--fg-1);
+    border:1px solid var(--rule);border-radius:8px;padding:13px;font-family:var(--sans);
+    font-size:14px;line-height:1.55;resize:vertical}
+  textarea:focus{outline:none;border-color:var(--accent)}
+  .row{display:flex;gap:12px;align-items:center;margin-top:14px;flex-wrap:wrap}
+  button.act{background:var(--accent);color:#1a120b;border:none;border-radius:7px;
+    padding:10px 18px;font-weight:600;font-size:13px;cursor:pointer;
+    font-family:var(--sans)}
+  button.act:disabled{opacity:0.45;cursor:not-allowed}
+  button.ghost{background:transparent;color:var(--fg-2);border:1px solid var(--rule);
+    border-radius:7px;padding:9px 14px;font-size:13px;cursor:pointer}
+  .status{font-size:12px;color:var(--fg-3);font-family:var(--mono)}
+  .status.err{color:#e0915f}
+  .status.ok{color:#9bbf8a}
+  .draft{margin-top:26px;display:none}
+  .draft.show{display:block}
+  .sec{margin-bottom:22px}
+  .sec h3{font-family:var(--serif);font-size:16px;margin-bottom:10px;
+    border-bottom:1px solid var(--rule);padding-bottom:6px}
+  .card{background:var(--panel);border:1px solid var(--rule);border-radius:8px;
+    padding:14px;margin-bottom:10px}
+  .card label{display:block;font-size:10px;letter-spacing:0.07em;
+    text-transform:uppercase;color:var(--fg-3);margin:8px 0 3px}
+  .card input,.card textarea{width:100%;background:var(--panel-2);
+    border:1px solid var(--rule);border-radius:6px;color:var(--fg-1);
+    padding:7px 9px;font-family:var(--sans);font-size:13px}
+  .card textarea{min-height:54px}
+  .opt-row{display:grid;grid-template-columns:1fr 1fr 2fr auto;gap:8px;margin-top:6px}
+  .rm{background:transparent;border:1px solid var(--rule);color:var(--fg-3);
+    border-radius:6px;cursor:pointer;font-size:12px;padding:4px 9px}
+  .empty{color:var(--fg-3);font-size:13px;font-style:italic}
+</style>
+</head>
+<body>
+  <div class="bar">
+    <h1>Ariadne</h1><span class="sub">Operations desk</span>
+  </div>
+  <div class="wrap">
+    <aside class="rail">
+      <h2>Projects</h2>
+      <div id="projList"><div class="empty">Loading…</div></div>
+    </aside>
+    <main class="main">
+      <div id="picked" style="display:none">
+        <div class="ctx" id="ctx"></div>
+        <textarea id="note" placeholder="Describe, in plain language, what's happening on this project. e.g. &quot;Shortlisted Lin / Huang / Bardon for the shade — customer should pick or leave it with us. Cord length 1.8m confirmed.&quot;"></textarea>
+        <div class="row">
+          <button class="act" id="parseBtn">Parse with AI</button>
+          <span class="status" id="status"></span>
+        </div>
+
+        <div class="draft" id="draft">
+          <div class="sec"><h3>Decisions</h3><div id="dDecisions"></div></div>
+          <div class="sec"><h3>Timeline</h3><div id="dTimeline"></div></div>
+          <div class="sec"><h3>Journal</h3><div id="dJournal"></div></div>
+          <div class="row">
+            <button class="act" id="publishBtn">Publish to customer</button>
+            <span class="status" id="pubStatus"></span>
+          </div>
+        </div>
+      </div>
+      <div id="hint" class="empty">Select a project on the left to begin.</div>
+    </main>
+  </div>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  let current = null;        // selected project {id,reference,title}
+  let draft = null;          // last AI draft (mutable via inputs)
+
+  function field(label, value, ml) {
+    const w = document.createElement('div');
+    const l = document.createElement('label'); l.textContent = label;
+    const i = document.createElement(ml ? 'textarea' : 'input');
+    i.value = value || '';
+    w.append(l, i);
+    return { w, i };
+  }
+
+  async function loadProjects() {
+    const list = $('#projList');
+    try {
+      const res = await fetch('/api/projects');
+      const rows = await res.json();
+      list.replaceChildren();
+      if (!rows.length) { list.innerHTML = '<div class="empty">No projects yet.</div>'; return; }
+      rows.forEach(r => {
+        const b = document.createElement('button');
+        b.className = 'proj';
+        const ref = document.createElement('div'); ref.className = 'ref'; ref.textContent = r.reference;
+        const ti = document.createElement('div'); ti.className = 'ti'; ti.textContent = r.title;
+        const mo = document.createElement('div'); mo.className = 'mo'; mo.textContent = r.mode + ' · ' + r.id;
+        b.append(ref, ti, mo);
+        b.addEventListener('click', () => selectProject(r, b));
+        list.appendChild(b);
+      });
+    } catch (e) {
+      list.innerHTML = '<div class="empty">Backend offline.</div>';
+    }
+  }
+
+  function selectProject(r, btn) {
+    current = r;
+    document.querySelectorAll('.proj').forEach(x => x.classList.remove('on'));
+    btn.classList.add('on');
+    $('#hint').style.display = 'none';
+    $('#picked').style.display = 'block';
+    $('#ctx').replaceChildren();
+    const c = $('#ctx');
+    c.append('Project ');
+    const rb = document.createElement('b'); rb.textContent = r.reference; c.append(rb);
+    c.append(' · ');
+    const tb = document.createElement('b'); tb.textContent = r.title; c.append(tb);
+    $('#note').value = '';
+    $('#status').textContent = '';
+    $('#draft').classList.remove('show');
+    draft = null;
+  }
+
+  // ── Compose ──────────────────────────────────────────
+  $('#parseBtn').addEventListener('click', async () => {
+    if (!current) return;
+    const text = $('#note').value.trim();
+    const st = $('#status');
+    if (!text) { st.className = 'status err'; st.textContent = 'Write a note first.'; return; }
+    st.className = 'status'; st.textContent = 'Parsing…';
+    $('#parseBtn').disabled = true;
+    try {
+      const res = await fetch('/api/projects/' + encodeURIComponent(current.id) + '/compose', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
+      });
+      const body = await res.json();
+      if (!res.ok) {
+        st.className = 'status err';
+        st.textContent = body.error || ('Error ' + res.status);
+        return;
+      }
+      draft = body;
+      renderDraft();
+      st.className = 'status ok'; st.textContent = 'Draft ready — review and publish.';
+    } catch (e) {
+      st.className = 'status err'; st.textContent = 'Request failed: ' + e;
+    } finally {
+      $('#parseBtn').disabled = false;
+    }
+  });
+
+  function renderDraft() {
+    const D = $('#dDecisions'), T = $('#dTimeline'), J = $('#dJournal');
+    [D, T, J].forEach(n => n.replaceChildren());
+
+    (draft.decisions || []).forEach((d, idx) => {
+      const card = document.createElement('div'); card.className = 'card'; card.dataset.k = 'd';
+      const q = field('Question', d.question, false);
+      const ctx = field('Context', d.context, true);
+      const stage = field('Stage', d.stage, false);
+      const dl = field('Deadline', d.deadline, false);
+      card.append(q.w, ctx.w, stage.w, dl.w);
+      const ol = document.createElement('label'); ol.textContent = 'Options (value / name / meta)';
+      card.append(ol);
+      (d.options || []).forEach(o => {
+        const r = document.createElement('div'); r.className = 'opt-row';
+        const v = document.createElement('input'); v.value = o.value || ''; v.dataset.f = 'value';
+        const nm = document.createElement('input'); nm.value = o.name || ''; nm.dataset.f = 'name';
+        const me = document.createElement('input'); me.value = o.meta || ''; me.dataset.f = 'meta';
+        const rm = document.createElement('button'); rm.className = 'rm'; rm.textContent = '×';
+        rm.addEventListener('click', () => r.remove());
+        r.append(v, nm, me, rm);
+        card.append(r);
+      });
+      const del = document.createElement('button'); del.className = 'rm';
+      del.textContent = 'Remove decision'; del.style.marginTop = '10px';
+      del.addEventListener('click', () => card.remove());
+      card.append(del);
+      D.append(card);
+    });
+    if (!D.children.length) D.innerHTML = '<div class="empty">No decisions in this draft.</div>';
+
+    (draft.timeline || []).forEach(t => {
+      const card = document.createElement('div'); card.className = 'card'; card.dataset.k = 't';
+      const dt = field('Date', t.date, false);
+      const ti = field('Title', t.title, false);
+      const wy = field('Why', t.why, true);
+      const stl = document.createElement('label'); stl.textContent = 'Status';
+      const sel = document.createElement('select');
+      ['next', 'now', 'done'].forEach(v => {
+        const o = document.createElement('option'); o.value = v; o.textContent = v;
+        if (v === t.status) o.selected = true; sel.append(o);
+      });
+      sel.dataset.f = 'status';
+      sel.style.cssText = 'background:var(--panel-2);border:1px solid var(--rule);color:var(--fg-1);border-radius:6px;padding:7px';
+      card.append(dt.w, ti.w, wy.w, stl, sel);
+      const del = document.createElement('button'); del.className = 'rm';
+      del.textContent = 'Remove'; del.style.marginTop = '10px';
+      del.addEventListener('click', () => card.remove());
+      card.append(del);
+      T.append(card);
+    });
+    if (!T.children.length) T.innerHTML = '<div class="empty">No timeline items.</div>';
+
+    (draft.journal || []).forEach(j => {
+      const card = document.createElement('div'); card.className = 'card'; card.dataset.k = 'j';
+      const tx = field('Entry', j.text, true);
+      const wh = field('When', j.when, false);
+      card.append(tx.w, wh.w);
+      const del = document.createElement('button'); del.className = 'rm';
+      del.textContent = 'Remove'; del.style.marginTop = '10px';
+      del.addEventListener('click', () => card.remove());
+      card.append(del);
+      J.append(card);
+    });
+    if (!J.children.length) J.innerHTML = '<div class="empty">No journal entries.</div>';
+
+    $('#publishBtn').disabled = false;
+    $('#publishBtn').textContent = 'Publish to customer';
+    $('#pubStatus').textContent = '';
+    $('#draft').classList.add('show');
+  }
+
+  function collect() {
+    const out = { decisions: [], timeline: [], journal: [] };
+    document.querySelectorAll('#dDecisions .card[data-k="d"]').forEach(card => {
+      const ins = card.querySelectorAll(':scope > input, :scope > textarea');
+      const [q, ctx, stage, dl] = [...ins];
+      const options = [];
+      card.querySelectorAll('.opt-row').forEach(r => {
+        const v = r.querySelector('[data-f="value"]').value.trim();
+        const nm = r.querySelector('[data-f="name"]').value.trim();
+        const me = r.querySelector('[data-f="meta"]').value.trim();
+        if (v || nm) options.push({ value: v || nm, name: nm || v, meta: me });
+      });
+      out.decisions.push({
+        question: q.value.trim(), context: ctx.value.trim(),
+        stage: stage.value.trim(), deadline: dl.value.trim(), options,
+      });
+    });
+    document.querySelectorAll('#dTimeline .card[data-k="t"]').forEach(card => {
+      const [dt, ti, wy] = card.querySelectorAll(':scope > div input, :scope > div textarea');
+      const status = card.querySelector('[data-f="status"]').value;
+      out.timeline.push({
+        date: dt.value.trim(), title: ti.value.trim(),
+        why: wy.value.trim(), status,
+      });
+    });
+    document.querySelectorAll('#dJournal .card[data-k="j"]').forEach(card => {
+      const [tx, wh] = card.querySelectorAll(':scope > div input, :scope > div textarea');
+      out.journal.push({ text: tx.value.trim(), when: wh.value.trim() });
+    });
+    return out;
+  }
+
+  $('#publishBtn').addEventListener('click', async () => {
+    if (!current) return;
+    const btn = $('#publishBtn'), st = $('#pubStatus');
+    btn.disabled = true; btn.textContent = 'Publishing…';
+    try {
+      const res = await fetch('/api/projects/' + encodeURIComponent(current.id) + '/publish', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(collect()),
+      });
+      if (!res.ok) {
+        const b = await res.json().catch(() => ({}));
+        st.className = 'status err'; st.textContent = b.error || ('Error ' + res.status);
+        btn.disabled = false; btn.textContent = 'Publish to customer';
+        return;
+      }
+      st.className = 'status ok';
+      st.textContent = 'Published — the customer dashboard updated live.';
+      btn.textContent = 'Published ✓';   // stays disabled (single-shot)
+    } catch (e) {
+      st.className = 'status err'; st.textContent = 'Failed: ' + e;
+      btn.disabled = false; btn.textContent = 'Publish to customer';
+    }
+  });
+
+  loadProjects();
+})();
+</script>
+</body>
+</html>

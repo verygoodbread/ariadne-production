@@ -2155,20 +2155,35 @@ body[data-mode="concierge"].behind-open .quiet { display: none; }
   editForm.addEventListener('submit', () => closeEdit(true));
 
   // ── Boot ───────────────────────────────────────────────
-  // ── Backend hydration ──────────────────────────────────
-  // Everything below is brief-derived. The dashboard is opened from the
-  // Concierge as "/Project Dashboard.html?p=<id>"; with no id it shows a
-  // "no project" state instead of stale demo content.
+  // Backend hydration. Opened from the Concierge as "?p=<id>"; with no id we
+  // show a "no project" state instead of stale demo content. All decision /
+  // timeline / journal copy is operator-authored + AI-shaped, so it is built
+  // with DOM nodes + textContent (never innerHTML) to neutralise injection.
   const params = new URLSearchParams(location.search);
   const projectId = params.get('p');
 
+  // Local pending picks survive a live re-render of an open decision.
+  const pendingPick = Object.create(null);
+
+  function el(tag, cls, text) {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+
   function showNoProject(msg) {
     const page = $('.page');
-    if (page) page.innerHTML =
-      '<section class="status-row reveal" style="flex-direction:column;align-items:flex-start;gap:10px;">' +
-      '<span class="eye"><span class="dot" aria-hidden="true"></span><span>No project loaded</span></span>' +
-      '<div class="project">' + (msg || 'Submit a brief to open a project.') + '</div>' +
-      '</section>';
+    if (!page) return;
+    page.replaceChildren();
+    const sec = el('section', 'status-row reveal');
+    sec.style.cssText = 'flex-direction:column;align-items:flex-start;gap:10px;';
+    const eye = el('span', 'eye');
+    eye.appendChild(el('span', 'dot'));
+    eye.appendChild(el('span', null, 'No project loaded'));
+    sec.appendChild(eye);
+    sec.appendChild(el('div', 'project', msg || 'Submit a brief to open a project.'));
+    page.appendChild(sec);
   }
 
   function patchProject(patch) {
@@ -2180,88 +2195,222 @@ body[data-mode="concierge"].behind-open .quiet { display: none; }
     }).catch(err => console.error('[Ariadne] PATCH failed:', err));
   }
 
-  function emptyState(text) {
-    return '<li class="tl" style="opacity:0.6;list-style:none;">' +
-           '<div class="body"><p class="why">' + text + '</p></div></li>';
+  // ── Safe renderers (DOM builders) ──────────────────────
+  function renderDecisions(list) {
+    const wrap = $('.decisions');
+    if (!wrap) return;
+    wrap.replaceChildren();
+    if (!list || !list.length) {
+      const p = el('p', 'dec-context', 'No decisions yet — your brief is in review. We’ll post calls here as they come up.');
+      p.style.opacity = '0.6';
+      wrap.appendChild(p);
+      return;
+    }
+    list.forEach((d, i) => {
+      const resolved = d.status === 'resolved' || d.status === 'deferred';
+      const art = el('article', 'decision' + (resolved ? ' resolved' : ''));
+      art.dataset.id = d.id || ('d-' + i);
+
+      const head = el('div', 'dec-head');
+      const eye = el('span', 'eye');
+      eye.appendChild(el('span', 'dot'));
+      eye.appendChild(el('span', 'stage-tag', d.stage || 'Stage'));
+      eye.appendChild(document.createTextNode(' · '));
+      eye.appendChild(el('span', null, 'decision ' + String(i + 1).padStart(2, '0')));
+      head.appendChild(eye);
+      head.appendChild(el('span', 'timer', d.deadline || ''));
+      art.appendChild(head);
+
+      art.appendChild(el('h3', null, d.question || ''));
+      if (d.context) art.appendChild(el('p', 'dec-context', d.context));
+
+      const opts = el('div', 'dec-options');
+      opts.setAttribute('role', 'radiogroup');
+      (d.options || []).forEach(o => {
+        const b = el('button', 'opt');
+        b.type = 'button';
+        b.dataset.val = o.value;
+        const picked = pendingPick[art.dataset.id] === o.value || d.chosen === o.value;
+        b.setAttribute('aria-pressed', picked ? 'true' : 'false');
+        b.appendChild(el('span', 'nm', o.name || o.value));
+        b.appendChild(el('span', 'meta', o.meta || ''));
+        opts.appendChild(b);
+      });
+      if (pendingPick[art.dataset.id]) art.classList.add('has-pick');
+      art.appendChild(opts);
+
+      if (!resolved) {
+        const foot = el('div', 'dec-foot');
+        const defer = el('button', 'dec-defer');
+        defer.type = 'button';
+        defer.dataset.defer = art.dataset.id;
+        defer.appendChild(el('span', null, 'Leave this with us'));
+        defer.appendChild(el('span', 'ar'));
+        foot.appendChild(defer);
+        const conf = el('button', 'dec-confirm', 'Confirm pick');
+        conf.type = 'button';
+        foot.appendChild(conf);
+        art.appendChild(foot);
+      }
+
+      const note = el('div', 'resolved-note');
+      note.setAttribute('aria-live', 'polite');
+      if (resolved) {
+        note.style.display = 'flex';
+        const chosenName = (d.options || []).find(o => o.value === d.chosen);
+        note.append('Resolved · ',
+          el('span', 'rn-text',
+            d.status === 'deferred' ? 'left with us.'
+            : (chosenName ? chosenName.name : (d.chosen || '')) + '.'));
+      } else {
+        note.append('Resolved · ', el('span', 'rn-text', ' '));
+      }
+      art.appendChild(note);
+      wrap.appendChild(art);
+    });
   }
 
-  function hydrate(p) {
+  const TL_BADGE = { next: 'Up next', now: 'Weighing', done: 'Decided' };
+  function renderTimeline(list) {
+    const ol = $('#behind ol.timeline');
+    if (!ol) return;
+    ol.replaceChildren();
+    if (!list || !list.length) {
+      const li = el('li', 'tl');
+      li.style.cssText = 'opacity:0.6;list-style:none;';
+      const body = el('div', 'body');
+      body.appendChild(el('p', 'why', 'Nothing yet — your brief is in review. This fills in as work begins.'));
+      li.appendChild(body);
+      ol.appendChild(li);
+      return;
+    }
+    list.forEach(t => {
+      const li = el('li', 'tl ' + (['next', 'now', 'done'].includes(t.status) ? t.status : 'now'));
+      li.appendChild(el('time', 'ts', t.date || ''));
+      li.appendChild(el('span', 'pip'));
+      const body = el('div', 'body');
+      const hd = el('header');
+      hd.appendChild(el('span', 'badge', TL_BADGE[t.status] || 'Update'));
+      body.appendChild(hd);
+      body.appendChild(el('h3', null, t.title || ''));
+      if (t.why) body.appendChild(el('p', 'why', t.why));
+      li.appendChild(body);
+      ol.appendChild(li);
+    });
+  }
+
+  function renderJournal(list) {
+    const ol = $('.journal-list');
+    if (!ol) return;
+    ol.replaceChildren();
+    if (!list || !list.length) {
+      const li = el('li', 'j');
+      li.style.opacity = '0.6';
+      li.appendChild(el('div', 'txt', 'Brief received. The journal fills in as work begins.'));
+      ol.appendChild(li);
+      return;
+    }
+    list.forEach((j, i) => {
+      const li = el('li', 'j' + (i === 0 ? ' active' : ''));
+      li.appendChild(el('div', 'txt', j.text || ''));
+      li.appendChild(el('span', 'when', j.when || ''));
+      ol.appendChild(li);
+    });
+  }
+
+  function applyData(p) {
     const title = (p.product && p.product.title) || 'Project';
     document.title = title + ' — Ariadne';
     if (crumbTitle) crumbTitle.textContent = title;
     const ref = $('.bar-ref'); if (ref) ref.textContent = p.reference;
-
     const proj = $('.status-row .project'); if (proj) proj.textContent = title;
     const statusEye = $('.status-row .eye span:last-child');
     if (statusEye) statusEye.textContent = p.status || 'Brief received';
 
-    // Quote
     const amount = p.quote ? p.quote.amount : null;
     const fig = $('.quote-figure');
-    if (fig && amount != null) fig.innerHTML = '$' + amount + '<small> USD</small>';
+    if (fig && amount != null) {
+      fig.replaceChildren(document.createTextNode('$' + amount),
+                          el('small', null, ' USD'));
+    }
     const minis = $$('.status-r .mini .v');
-    if (minis[0]) minis[0].textContent = '—';                 // ship date: TBD
+    if (minis[0]) minis[0].textContent = '—';
     if (minis[1] && amount != null) minis[1].textContent = '$' + amount;
     const qline = $('.quote-line');
     if (qline) qline.textContent = (p.quote && p.quote.caption) || 'Returning with your quote.';
 
-    // Stage thread (brief-derived: 3 personal / 5 production)
     const strip = $('.thread-strip');
     const meta  = $('.thread-head .meta');
     if (strip && Array.isArray(p.stages)) {
       const business = p.brief && p.brief.audience === 'customers';
-      if (meta) meta.textContent = business
-        ? 'Production run · ' + p.stages.length + ' stages'
-        : 'Personal commission · ' + p.stages.length + ' stages';
-      $$('.stage', strip).forEach(el => el.remove());
+      if (meta) meta.textContent =
+        (business ? 'Production run · ' : 'Personal commission · ') + p.stages.length + ' stages';
+      $$('.stage', strip).forEach(n => n.remove());
       p.stages.forEach(s => {
-        const div = document.createElement('div');
-        div.className = 'stage' + (s.state === 'now' ? ' now' : '');
-        div.innerHTML =
-          '<span class="node">' + String(s.order).padStart(2, '0') + '</span>' +
-          '<div class="body"><span class="lbl">' + s.label + '</span>' +
-          '<span class="note">' + s.note + '</span></div>';
+        const div = el('div', 'stage' + (s.state === 'now' ? ' now' : ''));
+        div.appendChild(el('span', 'node', String(s.order).padStart(2, '0')));
+        const body = el('div', 'body');
+        body.appendChild(el('span', 'lbl', s.label));
+        body.appendChild(el('span', 'note', s.note));
+        div.appendChild(body);
         strip.appendChild(div);
       });
     }
 
-    // Product card + edit form
-    const sp = (p.product && p.product.specs) || {};
-    if (fields.title) fields.title.textContent = title;
-    if (fields.sub && p.product) fields.sub.textContent = p.product.subtitle;
-    if (fields.mat)  fields.mat.textContent  = sp.material || '—';
-    if (fields.qty)  fields.qty.textContent  = sp.quantity || '—';
-    if (fields.time) fields.time.textContent = sp.timeline || '—';
-    if (fields.aud)  fields.aud.textContent  = sp.audience || '—';
+    // Piece identity (design-derived). Don't clobber an open edit form.
+    const prod = p.product || {};
+    const sp = prod.specs || {};
     const eye = $('.prod-eye');
-    if (eye) eye.textContent = p.reference + ' · turned beech & ceramic';
-    if (inputs.title) inputs.title.value = title;
-    if (inputs.sub && p.product) inputs.sub.value = p.product.subtitle;
-    if (inputs.mat)  inputs.mat.value  = sp.material || '';
-    if (inputs.qty)  inputs.qty.value  = sp.quantity || '';
-    if (inputs.time) inputs.time.value = sp.timeline || '';
-    if (inputs.aud)  inputs.aud.value  = sp.audience || '';
+    if (eye) eye.textContent = p.reference + (prod.eyebrow ? ' · ' + prod.eyebrow : '');
+    const fileLine = $$('.file-line span');
+    if (fileLine[0] && prod.file) fileLine[0].textContent = prod.file;
+    if (fileLine[1] && prod.view) fileLine[1].textContent = 'view: ' + prod.view;
+    const dimTexts = $$('.prod-stage svg text');
+    (prod.dimensions || []).forEach((dim, i) => {
+      if (dimTexts[i]) dimTexts[i].textContent =
+        dim.label === '⌀' ? '⌀ ' + dim.value : dim.value;
+    });
+    if (!prodCard.classList.contains('editing')) {
+      if (fields.title) fields.title.textContent = title;
+      if (fields.sub) fields.sub.textContent = prod.subtitle || '';
+      if (fields.mat)  fields.mat.textContent  = sp.material || '—';
+      if (fields.qty)  fields.qty.textContent  = sp.quantity || '—';
+      if (fields.time) fields.time.textContent = sp.timeline || '—';
+      if (fields.aud)  fields.aud.textContent  = sp.audience || '—';
+      if (inputs.title) inputs.title.value = title;
+      if (inputs.sub) inputs.sub.value = prod.subtitle || '';
+      if (inputs.mat)  inputs.mat.value  = sp.material || '';
+      if (inputs.qty)  inputs.qty.value  = sp.quantity || '';
+      if (inputs.time) inputs.time.value = sp.timeline || '';
+      if (inputs.aud)  inputs.aud.value  = sp.audience || '';
+    }
 
-    // Notes → into the quiet panel's "last move" line
     const what = $('.quiet-last .what span:last-child');
-    if (what) what.innerHTML = p.notes
-      ? 'From your brief: <b>' + p.notes.replace(/</g, '&lt;') + '</b>'
-      : 'Brief filed · awaiting first move';
+    if (what) {
+      what.replaceChildren();
+      if (p.notes) {
+        what.append('From your brief: ', el('b', null, p.notes));
+      } else {
+        what.textContent = 'Brief filed · awaiting first move';
+      }
+    }
 
-    // Fully brief-derived: no narrative yet → explicit empty states.
-    const tl = $('#behind ol.timeline');
-    if (tl) tl.innerHTML = emptyState('Nothing yet — your brief is in review. This fills in as work begins.');
-    const decs = $('.decisions');
-    if (decs) decs.innerHTML =
-      '<p class="dec-context" style="opacity:0.6;">No decisions yet — your brief is in review. We’ll post calls here as they come up.</p>';
-    const jl = $('.journal-list');
-    if (jl) jl.innerHTML =
-      '<li class="j" style="opacity:0.6;"><div class="txt">Brief received. The journal fills in as work begins.</div></li>';
+    renderTimeline(p.timeline);
+    renderDecisions(p.decisions);
+    renderJournal(p.journal);
 
-    // Mode — reuse the existing applyMode so pill/body/explain stay in sync.
     applyMode(p.mode === 'atelier' ? 'atelier' : 'concierge');
+    updateDecCount();
+  }
 
-    // Two-way: persist mode switches and product edits.
+  // ── One-time wiring (delegated; survives live re-renders) ──
+  function reload() {
+    return fetch('/api/projects/' + encodeURIComponent(projectId))
+      .then(r => r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status)))
+      .then(applyData);
+  }
+
+  function wireOnce() {
     modalCommit.addEventListener('click', () =>
       patchProject({ mode: document.body.getAttribute('data-mode') }));
     editForm.addEventListener('submit', () => patchProject({
@@ -2275,22 +2424,67 @@ body[data-mode="concierge"].behind-open .quiet { display: none; }
       },
     }));
 
-    updateDecCount();
+    const decs = $('.decisions');
+    if (decs) decs.addEventListener('click', e => {
+      const card = e.target.closest('.decision');
+      if (!card) return;
+      const id = card.dataset.id;
+      const opt = e.target.closest('.opt');
+      if (opt) {
+        pendingPick[id] = opt.dataset.val;
+        $$('.opt', card).forEach(o =>
+          o.setAttribute('aria-pressed', o === opt ? 'true' : 'false'));
+        card.classList.add('has-pick');
+        return;
+      }
+      if (e.target.closest('.dec-confirm')) {
+        const val = pendingPick[id];
+        if (!val) return;
+        const name = (() => {
+          const b = $(`.opt[data-val="${val}"] .nm`, card);
+          return b ? b.textContent : val;
+        })();
+        card.classList.add('resolved');
+        const rn = card.querySelector('.rn-text');
+        if (rn) rn.textContent = name + '.';
+        const note = card.querySelector('.resolved-note');
+        if (note) note.style.display = 'flex';
+        updateDecCount();
+        showToast('Confirmed · ' + name);
+        patchProject({ decisions: { [id]: { status: 'resolved', chosen: val } } });
+        return;
+      }
+      if (e.target.closest('.dec-defer')) {
+        card.classList.add('resolved');
+        const rn = card.querySelector('.rn-text');
+        if (rn) rn.textContent = 'left with us.';
+        const note = card.querySelector('.resolved-note');
+        if (note) note.style.display = 'flex';
+        updateDecCount();
+        showToast('Left with us.');
+        patchProject({ decisions: { [id]: { status: 'deferred', chosen: null } } });
+        return;
+      }
+    });
   }
 
   if (!projectId) {
     showNoProject();
   } else {
-    fetch('/api/projects/' + encodeURIComponent(projectId))
-      .then(r => r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status)))
-      .then(hydrate)
-      .catch(err => {
-        console.error('[Ariadne] could not load project:', err);
-        showNoProject('Could not load this project. Is the backend running?');
-      });
+    wireOnce();
+    reload().catch(err => {
+      console.error('[Ariadne] could not load project:', err);
+      showNoProject('Could not load this project. Is the backend running?');
+    });
+    // Live updates pushed by the operator desk.
+    try {
+      const es = new EventSource('/api/projects/' + encodeURIComponent(projectId) + '/events');
+      es.addEventListener('project-updated', () =>
+        reload().catch(e => console.error('[Ariadne] live refresh failed:', e)));
+    } catch (e) {
+      console.error('[Ariadne] SSE unavailable:', e);
+    }
   }
-
-  updateDecCount();
 })();
 </script>
 </body>
