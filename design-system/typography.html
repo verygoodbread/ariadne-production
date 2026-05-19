@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Typography — Ariadne Design System</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="ds.css">
+<style>
+  .spec { display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 16px; padding:18px 0; border-bottom:1px solid var(--rule); }
+  .spec .sample { flex:1 1 320px; color:var(--ink-2); }
+  .spec .tag { font-family:var(--sans); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink-2-low); flex:0 0 130px; }
+  .spec code { font-size:12px; }
+  .serif { font-family: var(--serif); }
+  .sans  { font-family: var(--sans); }
+</style>
+</head>
+<body>
+  <nav class="ds-nav">
+    <a class="ds-home" href="index.html">Ariadne</a>
+    <a href="logo.html">Logo</a>
+    <a href="colours.html">Colours</a>
+    <a href="typography.html" aria-current>Typography</a>
+    <a href="spacing.html">Spacing &amp; layout</a>
+    <a href="motion.html">Motion</a>
+    <a href="interaction.html">Interaction</a>
+  </nav>
+
+  <h1>Typography</h1>
+  <p class="lede">An editorial serif voice carried by one workhorse sans for product UI.</p>
+
+  <h2>Typefaces</h2>
+  <div class="spec">
+    <span class="tag">Serif · display &amp; body</span>
+    <span class="sample serif" style="font-size:30px">EB Garamond <em style="font-style:italic">— and its italic</em></span>
+  </div>
+  <p><code>--serif: "EB Garamond", "Cormorant Garamond", Georgia, serif</code> — every headline, the wordmark, and all body copy. Italic is a primary voice here (prompts, leads, the CTA), not just emphasis.</p>
+  <div class="spec">
+    <span class="tag">Sans · product UI</span>
+    <span class="sample sans" style="font-size:24px">Inter — labels, eyebrows, data</span>
+  </div>
+  <p><code>--sans: "Inter", system-ui, sans-serif</code> — scoped to the chrome inside the visualisers (stats, captions, keycaps) so product UI reads as UI, not prose.</p>
+
+  <h2>Type scale</h2>
+  <p>Sizes are fluid <code>clamp(min, vw, max)</code> — they breathe with the viewport. Shown below at this window's computed size.</p>
+
+  <div class="spec">
+    <span class="tag">CTA line</span>
+    <span class="sample serif" style="font-style:italic;font-size:clamp(40px,5.4vw,76px);line-height:1.06;letter-spacing:-0.018em">What would you make, if you could make <span style="color:var(--spark)">anything</span>?</span>
+  </div>
+  <div class="spec">
+    <span class="tag">Section title</span>
+    <span class="sample serif" style="font-size:clamp(34px,4.2vw,56px);line-height:1.1;letter-spacing:-0.018em">Loveable, but for physical products.</span>
+  </div>
+  <div class="spec">
+    <span class="tag">Section lead</span>
+    <span class="sample serif" style="font-size:clamp(26px,2.6vw,38px);line-height:1.15;letter-spacing:-0.012em">A manufacturing network you couldn't get into alone.</span>
+  </div>
+  <div class="spec">
+    <span class="tag">Body copy</span>
+    <span class="sample serif" style="font-size:clamp(16px,1.15vw,18px);line-height:1.6;color:var(--ink-2-mid)">Every unit is checked against the spec before it leaves the factory floor. Dimensional accuracy, finish quality, packaging integrity.</span>
+  </div>
+  <div class="spec">
+    <span class="tag">Wordmark</span>
+    <span class="sample serif" style="font-style:italic;font-weight:500;font-size:24px;letter-spacing:0.005em">Ariadne</span>
+  </div>
+  <div class="spec">
+    <span class="tag">UI label</span>
+    <span class="sample sans" style="font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-2-low)">passed · flagged · reject rate</span>
+  </div>
+
+  <h2>Tracking rules</h2>
+  <table>
+    <tr><th>Context</th><th>Letter-spacing</th><th>Why</th></tr>
+    <tr><td>Large serif headings</td><td><code>-0.012em → -0.018em</code></td><td>Tighten big type so it sets as one shape</td></tr>
+    <tr><td>Serif body / wordmark</td><td><code>0 → 0.005em</code></td><td>Neutral — let the face do the work</td></tr>
+    <tr><td>Sans UI labels / eyebrows</td><td><code>0.04em → 0.08em</code></td><td>Open small caps-y labels for legibility</td></tr>
+  </table>
+
+  <div class="note">Reach for italic serif before bold. Weight in this system is restraint — emphasis comes from <em>slant</em>, scale, and the <span style="color:var(--spark)">spark</span> colour.</div>
+
+  <footer>Ariadne Labs — design system · typography</footer>
+</body>
+</html>

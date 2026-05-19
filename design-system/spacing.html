@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spacing &amp; layout — Ariadne Design System</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="ds.css">
+<style>
+  .bar { background: var(--accent-soft); height: 18px; border-radius: 3px; margin: 6px 0; }
+  .radii { display:flex; gap:24px; flex-wrap:wrap; margin-top:18px; }
+  .radii figure { text-align:center; }
+  .radii .box { width:120px; height:84px; border:1px solid var(--rule); background:rgba(241,235,222,0.05); }
+  .radii figcaption { font-family:var(--sans); font-size:11px; color:var(--ink-2-low); margin-top:8px; letter-spacing:0.05em; }
+  .width-demo { border:1px solid var(--rule); border-radius:var(--r-card); padding:14px; margin:8px 0; color:var(--ink-2-mid); font-size:13px; font-family:var(--sans); }
+</style>
+</head>
+<body>
+  <nav class="ds-nav">
+    <a class="ds-home" href="index.html">Ariadne</a>
+    <a href="logo.html">Logo</a>
+    <a href="colours.html">Colours</a>
+    <a href="typography.html">Typography</a>
+    <a href="spacing.html" aria-current>Spacing &amp; layout</a>
+    <a href="motion.html">Motion</a>
+    <a href="interaction.html">Interaction</a>
+  </nav>
+
+  <h1>Spacing &amp; layout</h1>
+  <p class="lede">No fixed 8-pt grid — space is fluid. Rhythm scales with the viewport via <code>clamp()</code>.</p>
+
+  <h2>The clamp rhythm</h2>
+  <p>Spacing is expressed as <code>clamp(min, viewport-unit, max)</code> so it tightens on small screens and opens up on large ones. The recurring bands (resize this window to watch them move):</p>
+  <table>
+    <tr><th>Band</th><th>Token pattern</th><th>Used for</th></tr>
+    <tr><td>Hairline</td><td><code>1px</code></td><td>Rules, pill borders</td></tr>
+    <tr><td>Tight</td><td><code>clamp(8px, 1.5vh, 20px)</code></td><td>Inside-component gaps</td></tr>
+    <tr><td>Element</td><td><code>clamp(16px, 2.5vh, 32px)</code></td><td>Between related blocks</td></tr>
+    <tr><td>Group</td><td><code>clamp(40px, 6vh, 64px)</code></td><td>Between groups / nav ↔ content</td></tr>
+    <tr><td>Section pad</td><td><code>clamp(140px, 22vh, 240px)</code></td><td>Top of a major section</td></tr>
+    <tr><td>Edge pad</td><td><code>6vw</code></td><td>Left/right page gutter</td></tr>
+  </table>
+  <div style="margin-top:18px">
+    <div class="bar" style="width:clamp(8px,1.5vh,20px)"></div><small style="color:var(--ink-2-low);font-family:var(--sans);font-size:11px">tight</small>
+    <div class="bar" style="width:clamp(16px,2.5vh,32px)"></div><small style="color:var(--ink-2-low);font-family:var(--sans);font-size:11px">element</small>
+    <div class="bar" style="width:clamp(40px,6vh,64px)"></div><small style="color:var(--ink-2-low);font-family:var(--sans);font-size:11px">group</small>
+    <div class="bar" style="width:clamp(140px,22vh,240px)"></div><small style="color:var(--ink-2-low);font-family:var(--sans);font-size:11px">section pad</small>
+  </div>
+
+  <h2>Content widths</h2>
+  <div class="width-demo" style="max-width:var(--max-product)">--max-product · 1100px — the product column</div>
+  <div class="width-demo" style="max-width:var(--max-cta)">--max-cta · 900px — the closing CTA</div>
+  <div class="width-demo" style="max-width:var(--max-copy)">--max-copy · 38ch — measure for a paragraph of body copy. Lines never run longer than this so prose stays readable.</div>
+
+  <h2>Corner radii</h2>
+  <div class="radii">
+    <figure><div class="box" style="border-radius:var(--r-pill)"></div><figcaption>--r-pill · 2px</figcaption></figure>
+    <figure><div class="box" style="border-radius:var(--r-kbd)"></div><figcaption>--r-kbd · 4px</figcaption></figure>
+    <figure><div class="box" style="border-radius:var(--r-card)"></div><figcaption>--r-card · 10px</figcaption></figure>
+    <figure><div class="box" style="border-radius:var(--r-card-lg)"></div><figcaption>--r-card-lg · 14px</figcaption></figure>
+  </div>
+
+  <div class="note">When in doubt, prefer a <code>clamp()</code> over a fixed pixel gap. The whole layout is meant to breathe between a phone and a wide desktop without breakpoints fighting it.</div>
+
+  <footer>Ariadne Labs — design system · spacing &amp; layout</footer>
+</body>
+</html>

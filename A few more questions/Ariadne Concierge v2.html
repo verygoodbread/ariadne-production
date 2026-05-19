@@ -1,0 +1,1460 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Ariadne — concierge brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="Ariadne Concierge - vizes.css" />
+<link rel="stylesheet" href="Ariadne Concierge v2.css" />
+</head>
+<body data-palette="ink" data-gate="closed" data-concierge="on">
+
+<div class="page">
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round">
+          <path class="lab-path" pathLength="100" d="M13.2 3.1 a9 9 0 1 1 -2.4 0" />
+          <path class="lab-path" pathLength="100" d="M11 20.4 a6 6 0 1 1 2 0" />
+          <path class="lab-path" pathLength="100" d="M13 6.6 a3 3 0 1 1 -2 0" />
+          <circle class="lab-dot" cx="12" cy="12" r="1.1" fill="currentColor" stroke="none" />
+        </svg>
+      </span>
+      <span class="brand-name">Ariadne</span>
+    </div>
+    <div class="breadcrumb" aria-label="Where you are in the flow">
+      <span class="step">Design</span>
+      <span class="sep"></span>
+      <span class="step now">Brief</span>
+      <span class="sep"></span>
+      <span class="step">Make</span>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <header class="hero">
+    <h1 class="title">A few more questions</h1>
+    <p class="hero-sub">A real human returns a quote in two business days.</p>
+  </header>
+
+  <!-- ───────────────── The Gate (audience) ─────────────────
+       The mandatory door. Until one is opened, the rest of the
+       form is veiled. The choice carries the rest of the page. -->
+  <section class="gate" aria-label="Choose an audience">
+    <div class="gate-prompt">
+      <span class="gp-num">Step 01 — Audience</span>
+      <div class="gp-lead">
+        Who is this for?
+        <span class="help" data-help="audience">
+          <button class="help-trigger" type="button" aria-label="Why this matters">?</button>
+          <div class="help-panel" role="tooltip">
+            <h4 class="help-title">Why this is required</h4>
+            <p class="help-body">Path stages, lead time, and pricing all branch from this answer. A one-off and a 500-piece run share almost nothing operationally.</p>
+          </div>
+        </span>
+      </div>
+    </div>
+
+    <div class="gate-doors" id="gateDoors" role="radiogroup" aria-label="Audience">
+
+      <button class="door" data-val="myself" aria-pressed="false" role="radio" aria-checked="false">
+        <span class="door-thread" aria-hidden="true"></span>
+
+        <!-- Glyph: a single warm orb (intimate, one piece, just you) -->
+        <span class="door-glyph" aria-hidden="true">
+          <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round">
+            <line x1="20" y1="14" x2="80" y2="14" stroke="rgba(243,232,213,0.30)" stroke-width="0.8" />
+            <line class="glyph-cord" x1="50" y1="14" x2="50" y2="42" stroke="rgba(243,232,213,0.70)" stroke-width="1" />
+            <path d="M38 42 Q 30 58, 30 70 L 70 70 Q 70 58, 62 42 Z" stroke="rgba(243,232,213,0.90)" stroke-width="1.2" />
+            <circle cx="50" cy="60" r="9" fill="rgba(246,191,140,0.30)" stroke="none" />
+            <circle cx="50" cy="60" r="3.5" fill="rgba(253,228,196,0.85)" stroke="none" />
+            <ellipse cx="50" cy="70" rx="20" ry="2.2" stroke="rgba(243,232,213,0.70)" />
+          </svg>
+        </span>
+
+        <span class="door-check-corner" aria-hidden="true">
+          <svg viewBox="0 0 12 9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="1.5,5 4.5,7.5 10.5,1.5" />
+          </svg>
+        </span>
+
+        <div>
+          <div class="door-name">Myself</div>
+        </div>
+        <div class="door-desc">
+          A personal commission. Made once — a piece for the home, a wedding gift, a one-off.
+        </div>
+        <div class="door-foot">
+          <div class="spec">
+            <span class="spec-k">Quantity</span>
+            <span class="spec-v">1&ndash;5 pcs</span>
+          </div>
+          <div class="spec">
+            <span class="spec-k">Lead time</span>
+            <span class="spec-v">4&ndash;6 wks</span>
+          </div>
+          <div class="spec">
+            <span class="spec-k">Path</span>
+            <span class="spec-v">3 stages</span>
+          </div>
+        </div>
+      </button>
+
+      <button class="door" data-val="customers" aria-pressed="false" role="radio" aria-checked="false">
+        <span class="door-thread" aria-hidden="true"></span>
+
+        <!-- Glyph: a row of lit shades (a run, for many people) -->
+        <span class="door-glyph" aria-hidden="true">
+          <svg viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round">
+            <line x1="10" y1="14" x2="90" y2="14" stroke="rgba(243,232,213,0.30)" stroke-width="0.8" />
+            <line x1="26" y1="14" x2="26" y2="40" stroke="rgba(243,232,213,0.65)" />
+            <line x1="50" y1="14" x2="50" y2="48" stroke="rgba(243,232,213,0.75)" />
+            <line x1="74" y1="14" x2="74" y2="40" stroke="rgba(243,232,213,0.65)" />
+            <path d="M18 40 Q 14 52, 14 60 L 38 60 Q 38 52, 34 40 Z" stroke="rgba(243,232,213,0.80)" stroke-width="1.1" />
+            <path d="M40 48 Q 34 62, 34 72 L 66 72 Q 66 62, 60 48 Z" stroke="rgba(243,232,213,0.95)" stroke-width="1.2" />
+            <path d="M66 40 Q 62 52, 62 60 L 86 60 Q 86 52, 82 40 Z" stroke="rgba(243,232,213,0.80)" stroke-width="1.1" />
+            <circle cx="26" cy="52" r="5" fill="rgba(246,191,140,0.22)" stroke="none" />
+            <circle cx="50" cy="62" r="7" fill="rgba(246,191,140,0.30)" stroke="none" />
+            <circle cx="74" cy="52" r="5" fill="rgba(246,191,140,0.22)" stroke="none" />
+            <circle cx="92" cy="52" r="0.8" fill="rgba(243,232,213,0.45)" stroke="none" />
+            <circle cx="96" cy="52" r="0.6" fill="rgba(243,232,213,0.30)" stroke="none" />
+          </svg>
+        </span>
+
+        <span class="door-check-corner" aria-hidden="true">
+          <svg viewBox="0 0 12 9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="1.5,5 4.5,7.5 10.5,1.5" />
+          </svg>
+        </span>
+
+        <div>
+          <div class="door-name">My customers</div>
+        </div>
+        <div class="door-desc">
+          A production run. Tooling, sampling, QC, and the freight that follows.
+        </div>
+        <div class="door-foot">
+          <div class="spec">
+            <span class="spec-k">Quantity</span>
+            <span class="spec-v">5&ndash;500+ pcs</span>
+          </div>
+          <div class="spec">
+            <span class="spec-k">Lead time</span>
+            <span class="spec-v">8&ndash;14 wks</span>
+          </div>
+          <div class="spec">
+            <span class="spec-k">Path</span>
+            <span class="spec-v">5 stages</span>
+          </div>
+        </div>
+      </button>
+
+    </div>
+  </section>
+
+  <main class="composition">
+
+    <!-- ─────────── Left — the form (veiled until gate opens) ─────────── -->
+    <section class="questionnaire veiled">
+
+      <!-- "Now making this for X" pill, appears once the gate opens -->
+      <div class="gate-receipt reveal-stagger" aria-live="polite">
+        <span class="gr-key">Making this for</span>
+        <span class="gr-val"><span class="gr-mark"></span><span id="grVal">Myself</span></span>
+        <button class="gr-change" type="button" id="grChange">Change</button>
+      </div>
+
+      <!-- Q2 — path strip -->
+      <section class="q reveal-stagger" data-q="path">
+        <div class="q-num">02</div>
+        <div class="q-lead">
+          Your path through production.
+          <span class="help" data-help="path">
+            <button class="help-trigger" type="button" aria-label="What this means">?</button>
+            <div class="help-panel" role="tooltip">
+              <h4 class="help-title">What we'll quote on</h4>
+              <p class="help-body">The stages your piece moves through. Hover any chip below to see what happens at each.</p>
+              <p class="help-body">Each stage is reviewed by a person on our team.</p>
+            </div>
+          </span>
+        </div>
+        <div class="q-body">
+          <div class="path" id="pathStrip" aria-live="polite"></div>
+
+          <div class="viz-well" id="vizWell" data-mode="hint" aria-live="polite">
+            <div class="viz-hint">
+              <div>
+                <div class="hint-line">Hover a stage above to preview.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Q3 — quantity / material / timeline -->
+      <section class="q reveal-stagger" data-q="constraints">
+        <div class="q-num">03</div>
+        <div class="q-lead">
+          Specifics.
+          <span class="help" data-help="specifics">
+            <button class="help-trigger" type="button" aria-label="About expert recommendations">?</button>
+            <div class="help-panel" role="tooltip">
+              <h4 class="help-title">"Expert recommendation"</h4>
+              <p class="help-body">Selecting it leaves the choice to an expert. A human reviews your brief and returns a real answer with the quote.</p>
+            </div>
+          </span>
+        </div>
+        <div class="q-body triple">
+
+          <div class="sub" data-sub="quantity">
+            <div class="sub-label">
+              Quantity
+              <span class="help" data-help="quantity">
+                <button class="help-trigger" type="button" aria-label="About quantity">?</button>
+                <div class="help-panel" role="tooltip">
+                  <h4 class="help-title">How quantity moves price</h4>
+                  <p class="help-body">Unit price drops fast at first, then settles. Tooling, sampling, and setup amortize across the run — the bigger the run, the less each piece carries.</p>
+                  <div class="help-viz">
+                    <div class="qty-curve" aria-label="Indicative unit price as a percentage of retail across run sizes">
+                      <div class="qc-row" data-tier="baseline">
+                        <span class="qc-tier">1–5 <em>pcs</em></span>
+                        <span class="qc-bar"><i style="width:100%"></i></span>
+                        <span class="qc-pct">100<em>%</em></span>
+                        <span class="qc-note">Retail / baseline</span>
+                      </div>
+                      <div class="qc-row">
+                        <span class="qc-tier">10–25</span>
+                        <span class="qc-bar"><i style="width:62%"></i></span>
+                        <span class="qc-pct">~62<em>%</em></span>
+                        <span class="qc-note">First volume break</span>
+                      </div>
+                      <div class="qc-row">
+                        <span class="qc-tier">50–100</span>
+                        <span class="qc-bar"><i style="width:57%"></i></span>
+                        <span class="qc-pct">~57<em>%</em></span>
+                        <span class="qc-note">Tooling pays off</span>
+                      </div>
+                      <div class="qc-row">
+                        <span class="qc-tier">100+</span>
+                        <span class="qc-bar"><i style="width:50%"></i></span>
+                        <span class="qc-pct">~50<em>%</em></span>
+                        <span class="qc-note">Half of retail</span>
+                      </div>
+                      <div class="qc-row">
+                        <span class="qc-tier">500+</span>
+                        <span class="qc-bar"><i style="width:40%"></i></span>
+                        <span class="qc-pct">~40<em>%</em></span>
+                        <span class="qc-note">Production rhythm</span>
+                      </div>
+                      <div class="qc-row" data-tier="floor">
+                        <span class="qc-tier">1000+</span>
+                        <span class="qc-bar"><i style="width:30%"></i></span>
+                        <span class="qc-pct">~30<em>%</em></span>
+                        <span class="qc-note">Practical floor</span>
+                      </div>
+                    </div>
+                    <p class="qty-curve-note">Indicative ranges only. Real per-unit pricing depends on geometry, finish, and the suppliers we shortlist for your piece.</p>
+                  </div>
+                </div>
+              </span>
+            </div>
+            <div>
+              <div class="sub-opts" role="group" aria-label="Quantity" id="qtyOpts"></div>
+              <div class="recommend" data-rec="quantity">
+                <span class="who">Acknowledged</span>
+                <span id="recQty">Leave this with us. A human reviews your brief and returns a real answer with the quote.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sub" data-sub="material">
+            <div class="sub-label">
+              Material
+              <span class="help" data-help="material">
+                <button class="help-trigger" type="button" aria-label="About material posture">?</button>
+                <div class="help-panel" role="tooltip">
+                  <h4 class="help-title">How material moves price</h4>
+                  <p class="help-body">Premium is our default tier &mdash; the 1&times; baseline. Budget and Mid-market unlock further savings; Bespoke adds a premium for hand-selected stock.</p>
+                  <div class="help-viz">
+                    <div class="qty-curve mat-tiers" aria-label="Indicative material tier price multipliers">
+                      <div class="qc-row">
+                        <span class="qc-tier">Budget</span>
+                        <span class="qc-bar"><i style="width:17%"></i></span>
+                        <span class="qc-pct">0.35<em>×</em></span>
+                        <span class="qc-note">MDF, particleboard, laminate, low-density foam. Further savings.</span>
+                      </div>
+                      <div class="qc-row">
+                        <span class="qc-tier">Mid-market</span>
+                        <span class="qc-bar"><i style="width:28%"></i></span>
+                        <span class="qc-pct">0.55<em>×</em></span>
+                        <span class="qc-note">Plywood, veneer, rubberwood, 1.8&nbsp;lb foam, acceptable joinery.</span>
+                      </div>
+                      <div class="qc-row" data-tier="baseline">
+                        <span class="qc-tier">Premium</span>
+                        <span class="qc-bar"><i style="width:50%"></i></span>
+                        <span class="qc-pct">1<em>×</em></span>
+                        <span class="qc-note">Solid wood, kiln-dried hardwood, performance fabric, reinforced joinery. Default.</span>
+                      </div>
+                      <div class="qc-row" data-tier="floor">
+                        <span class="qc-tier">Bespoke</span>
+                        <span class="qc-bar"><i style="width:100%"></i></span>
+                        <span class="qc-pct">2<em>×</em></span>
+                        <span class="qc-note">Hand-selected stock, hand-applied finishes, custom hardware.</span>
+                      </div>
+                    </div>
+                    <p class="qty-curve-note">Multipliers are vs. our Premium baseline. Real per-unit cost depends on geometry, finish, and sourcing.</p>
+                  </div>
+                </div>
+              </span>
+            </div>
+            <div>
+              <div class="sub-opts" role="group" aria-label="Material tier">
+                <button class="sub-opt" data-val="budget"   aria-pressed="false">Budget</button>
+                <button class="sub-opt" data-val="mid"      aria-pressed="false">Mid-market</button>
+                <button class="sub-opt" data-val="premium"  aria-pressed="false" data-default="true">Premium</button>
+                <button class="sub-opt" data-val="bespoke"  aria-pressed="false">Bespoke</button>
+                <button class="sub-opt ask" data-val="ask"  aria-pressed="false">Expert recommendation</button>
+              </div>
+              <div class="recommend" data-rec="material">
+                <span class="who">Acknowledged</span>
+                <span id="recMat">Leave this with us. A human reviews your brief and returns a real answer with the quote.</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="sub" data-sub="timeline">
+            <div class="sub-label">
+              Timeline
+              <span class="help" data-help="timeline">
+                <button class="help-trigger" type="button" aria-label="About timeline">?</button>
+                <div class="help-panel" role="tooltip">
+                  <h4 class="help-title">How timeline moves price</h4>
+                  <p class="help-body">Tight is our default pace &mdash; the 1&times; baseline. Normal and Flexible let us batch into runs already on the line; Rush and Emergency buy queue priority and air freight.</p>
+                  <div class="help-viz">
+                    <div class="qty-curve time-tiers" aria-label="Indicative timeline price multipliers">
+                      <div class="qc-row" data-tier="floor">
+                        <span class="qc-tier">Emergency</span>
+                        <span class="qc-bar"><i style="width:100%"></i></span>
+                        <span class="qc-pct">2.4<em>×</em></span>
+                        <span class="qc-note">All-hands, every shortcut on the table.</span>
+                      </div>
+                      <div class="qc-row">
+                        <span class="qc-tier">Rush</span>
+                        <span class="qc-bar"><i style="width:67%"></i></span>
+                        <span class="qc-pct">1.6<em>×</em></span>
+                        <span class="qc-note">Queue priority and air freight.</span>
+                      </div>
+                      <div class="qc-row" data-tier="baseline">
+                        <span class="qc-tier">Tight</span>
+                        <span class="qc-bar"><i style="width:42%"></i></span>
+                        <span class="qc-pct">1<em>×</em></span>
+                        <span class="qc-note">Default. Faster than normal, no heroics.</span>
+                      </div>
+                      <div class="qc-row">
+                        <span class="qc-tier">Normal</span>
+                        <span class="qc-bar"><i style="width:33%"></i></span>
+                        <span class="qc-pct">0.80<em>×</em></span>
+                        <span class="qc-note">Our honest range &mdash; further savings.</span>
+                      </div>
+                      <div class="qc-row">
+                        <span class="qc-tier">Flexible</span>
+                        <span class="qc-bar"><i style="width:23%"></i></span>
+                        <span class="qc-pct">0.55<em>×</em></span>
+                        <span class="qc-note">Batched into runs already on the line.</span>
+                      </div>
+                    </div>
+                    <p class="qty-curve-note">Multipliers are vs. our Tight baseline. Tight ≈ 3–4 wks personal, 6–10 wks production.</p>
+                  </div>
+                </div>
+              </span>
+            </div>
+            <div>
+              <div class="sub-opts" role="group" aria-label="Timeline tier">
+                <button class="sub-opt" data-val="flexible"  aria-pressed="false">Flexible</button>
+                <button class="sub-opt" data-val="normal"    aria-pressed="false">Normal</button>
+                <button class="sub-opt" data-val="tight"     aria-pressed="false" data-default="true">Tight</button>
+                <button class="sub-opt" data-val="rush"      aria-pressed="false">Rush</button>
+                <button class="sub-opt" data-val="emergency" aria-pressed="false">Emergency</button>
+                <button class="sub-opt ask" data-val="ask"   aria-pressed="false">Expert recommendation</button>
+              </div>
+              <div class="recommend" data-rec="timeline">
+                <span class="who">Acknowledged</span>
+                <span id="recTime">Leave this with us. A human reviews your brief and returns a real answer with the quote.</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Q4 — notes -->
+      <section class="q reveal-stagger" data-q="notes">
+        <div class="q-num">04</div>
+        <div class="q-lead">
+          Anything else?
+          <span class="help" data-help="notes">
+            <button class="help-trigger" type="button" aria-label="What to put here">?</button>
+            <div class="help-panel" role="tooltip">
+              <h4 class="help-title">What's useful here</h4>
+              <p class="help-body">Context, constraints, anything you're worried about. The small details are often the most useful.</p>
+            </div>
+          </span>
+        </div>
+        <div class="q-body">
+          <textarea class="freetext" id="notes" rows="5" placeholder="Context, constraints, dimensions, or anything else worth knowing."></textarea>
+        </div>
+      </section>
+
+      <!-- Q5 — mode -->
+      <section class="q reveal-stagger" data-q="mode">
+        <div class="q-num">05</div>
+        <div class="q-lead">
+          How would you like to run this?
+          <button class="help-trigger compare-trigger" type="button" id="openCompare" aria-label="Compare Concierge and Atelier in detail" aria-haspopup="dialog">?</button>
+        </div>
+        <div class="q-body">
+          <div class="choices" role="radiogroup" aria-label="How to run this">
+            <button class="choice" data-val="concierge" aria-pressed="true">
+              <span class="ch-eyebrow">For first-time founders</span>
+              <span class="ch-name">Ariadne Concierge</span>
+              <span class="ch-desc">For those who wants the  experience to “just work”. An experienced concierge runs your project; you make decisions on only the most important ones.</span>
+              <span class="ch-foot">Our recommended choice.</span>
+            </button>
+            <button class="choice" data-val="self" aria-pressed="false">
+              <span class="ch-eyebrow">For experienced founders</span>
+              <span class="ch-name">Ariadne Atelier</span>
+              <span class="ch-desc">For those who want to be in the loop. Full customization, full transparency, full participation. More hands-on work, more control.</span>
+              <span class="ch-foot">
+</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Q6 — submit -->
+      <section class="q commit reveal-stagger" data-q="submit">
+        <button class="submit" id="submitBtn" disabled>Get a quote</button>
+        <div class="promise">Back to you in 48 hours.</div>
+      </section>
+
+    </section>
+
+    <!-- ─────────── Right — the anchor (the piece) ─────────── -->
+    <aside class="anchor">
+      <div class="anchor-inner">
+        <div class="anchor-eyebrow">Your piece</div>
+        <div class="anchor-title">Hanging lamp, no. 04</div>
+        <div class="anchor-sub">Turned beech canopy · ceramic shade · 1.8m linen cord.</div>
+        <div class="anchor-stage" aria-label="Three-quarter view of your piece">
+          <svg viewBox="0 0 320 400" preserveAspectRatio="xMidYMid meet" fill="none" stroke="currentColor"
+               stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+
+            <!-- Faint guides -->
+            <g stroke="rgba(243,232,213,0.10)" stroke-width="0.5">
+              <line x1="160" y1="0"   x2="160" y2="400" />
+              <line x1="0"   y1="46"  x2="320" y2="46" stroke-dasharray="2 4"/>
+              <line x1="0"   y1="346" x2="320" y2="346" stroke-dasharray="2 4"/>
+            </g>
+
+            <!-- Ceiling line + canopy -->
+            <line x1="50" y1="46" x2="270" y2="46" stroke="rgba(243,232,213,0.45)" stroke-width="1" />
+            <ellipse cx="160" cy="46" rx="22" ry="4" stroke="rgba(243,232,213,0.85)" />
+            <rect x="146" y="46" width="28" height="8" rx="1" stroke="rgba(243,232,213,0.85)" />
+
+            <g class="lamp-group">
+              <path class="cord" d="M160 54 C160 100, 158 160, 160 230"
+                    stroke="rgba(243,232,213,0.85)" stroke-width="1.1" />
+              <path class="cord-thread" d="M160 54 C160 100, 158 160, 160 230"
+                    stroke="var(--accent)" stroke-width="1.4"
+                    stroke-dasharray="2 3" />
+
+              <ellipse cx="160" cy="230" rx="6" ry="1.6" stroke="rgba(243,232,213,0.85)" />
+              <ellipse cx="160" cy="240" rx="20" ry="5" stroke="rgba(243,232,213,0.85)" />
+              <path d="M140 240 C 120 280, 100 320, 92 358" stroke="rgba(243,232,213,0.92)" />
+              <path d="M180 240 C 200 280, 220 320, 228 358" stroke="rgba(243,232,213,0.92)" />
+              <ellipse cx="160" cy="358" rx="68" ry="11" stroke="rgba(243,232,213,0.92)" />
+              <ellipse cx="160" cy="358" rx="68" ry="11" fill="none" stroke="rgba(243,232,213,0.55)" stroke-dasharray="0.5 3" />
+              <ellipse cx="160" cy="358" rx="58" ry="8" stroke="rgba(243,232,213,0.30)" stroke-dasharray="1 3" />
+              <line x1="160" y1="240" x2="160" y2="358" stroke="rgba(243,232,213,0.20)" stroke-dasharray="1 3" />
+
+              <ellipse cx="160" cy="236" rx="22" ry="2" stroke="rgba(243,232,213,0.30)" />
+              <ellipse cx="160" cy="232" rx="20" ry="1.6" stroke="rgba(243,232,213,0.25)" />
+
+              <!-- Warm interior glow — appears once gate opens -->
+              <g class="shade-glow">
+                <ellipse cx="160" cy="330" rx="42" ry="22" fill="rgba(246,191,140,0.18)" stroke="none" />
+                <ellipse cx="160" cy="338" rx="26" ry="14" fill="rgba(253,228,196,0.28)" stroke="none" />
+                <ellipse cx="160" cy="358" rx="64" ry="9" fill="rgba(246,191,140,0.10)" stroke="none" />
+              </g>
+
+              <circle cx="160" cy="320" r="6" stroke="rgba(243,232,213,0.25)" />
+              <line x1="160" y1="320" x2="160" y2="356" stroke="rgba(243,232,213,0.20)" />
+            </g>
+
+            <!-- Dimension callouts -->
+            <g stroke="rgba(243,232,213,0.30)" stroke-width="0.5" fill="none">
+              <line x1="252" y1="240" x2="280" y2="240"/>
+              <line x1="252" y1="358" x2="280" y2="358"/>
+              <line x1="276" y1="240" x2="276" y2="358"/>
+            </g>
+            <text x="284" y="305" fill="rgba(243,232,213,0.55)" font-family="Inter, sans-serif" font-size="9" letter-spacing="0.04em">188mm</text>
+            <text x="92" y="382" fill="rgba(243,232,213,0.55)" font-family="Inter, sans-serif" font-size="9" letter-spacing="0.04em">⌀ 136</text>
+          </svg>
+
+          <div class="stage-readout">
+            <span class="file">lamp_04.step</span>
+            <span>view: ¾ front</span>
+          </div>
+        </div>
+
+        <div class="anchor-ledger" id="ledger" aria-live="polite"></div>
+
+        <!-- Live price-impact visualization. The hero figure is the
+             savings vs. store retail; the three factor rows below
+             show how each choice contributes. -->
+        <div class="price-impact" id="priceImpact" aria-live="polite">
+          <div class="pi-head">
+            <span class="pi-eyebrow">vs. store retail</span>
+            <span class="pi-scale">premium + tight is our 1&times; baseline (~35% of retail)</span>
+          </div>
+
+          <div class="pi-retail">
+            <div class="pi-retail-savings">
+              <span class="pi-retail-figure" id="piSavings">&mdash;</span>
+              <span class="pi-retail-caption" id="piSavingsCaption">make a choice to see your price</span>
+            </div>
+
+            <div class="pi-retail-bar">
+              <span class="pi-retail-track" aria-hidden="true"></span>
+              <i class="pi-retail-fill" id="piRetailFill"></i>
+
+              <span class="pi-retail-mark pi-retail-mark-baseline" id="piMarkBaseline">
+                <span class="prm-dot"></span>
+                <span class="prm-label">Baseline 25%</span>
+              </span>
+
+              <span class="pi-retail-mark pi-retail-mark-you" id="piMarkYou">
+                <span class="prm-dot"></span>
+                <span class="prm-label">You</span>
+              </span>
+
+              <span class="pi-retail-mark pi-retail-mark-store" id="piMarkStore">
+                <span class="prm-dot"></span>
+                <span class="prm-label">Retail 100%</span>
+              </span>
+            </div>
+          </div>
+
+          <div class="pi-divider">
+            <span class="pi-divider-label">your choices</span>
+          </div>
+
+          <div class="pi-rows">
+            <div class="pi-row" data-factor="quantity">
+              <span class="pi-name">Quantity</span>
+              <span class="pi-track">
+                <span class="pi-anchor" aria-hidden="true"></span>
+                <span class="pi-anchor-label">1&times;</span>
+                <i class="pi-fill"></i>
+                <span class="pi-dot"></span>
+              </span>
+              <span class="pi-mult">&mdash;</span>
+            </div>
+            <div class="pi-row" data-factor="material">
+              <span class="pi-name">Material</span>
+              <span class="pi-track">
+                <span class="pi-anchor" aria-hidden="true"></span>
+                <span class="pi-anchor-label">1&times;</span>
+                <i class="pi-fill"></i>
+                <span class="pi-dot"></span>
+              </span>
+              <span class="pi-mult">&mdash;</span>
+            </div>
+            <div class="pi-row" data-factor="timeline">
+              <span class="pi-name">Timeline</span>
+              <span class="pi-track">
+                <span class="pi-anchor" aria-hidden="true"></span>
+                <span class="pi-anchor-label">1&times;</span>
+                <i class="pi-fill"></i>
+                <span class="pi-dot"></span>
+              </span>
+              <span class="pi-mult">&mdash;</span>
+            </div>
+          </div>
+
+          <p class="pi-note">Baseline (1&times;) = Premium material + Tight timeline &mdash; what most pieces ship at. From there, Budget and Flexible unlock further savings, Bespoke and Rush add premium. Real numbers come back with your quote.</p>
+        </div>
+      </div>
+    </aside>
+
+  </main>
+</div>
+
+<!-- ───── Compare drawer: Concierge vs Atelier, near-fullscreen ───── -->
+<div class="compare" id="compare" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="cmpTitle">
+  <div class="compare-scrim" data-close="compare"></div>
+  <div class="compare-sheet" role="document">
+    <header class="cmp-head">
+      <div class="cmp-eyebrow">
+        <span class="cmp-eyedot"></span>
+        <span>Two tiers, one studio</span>
+      </div>
+      <h2 class="cmp-title" id="cmpTitle">Concierge or Atelier?</h2>
+      <p class="cmp-sub">Both are included at no additional cost.</p>
+      <button class="cmp-close" type="button" data-close="compare" aria-label="Close comparison">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+          <line x1="3" y1="3" x2="13" y2="13" />
+          <line x1="13" y1="3" x2="3" y2="13" />
+        </svg>
+      </button>
+    </header>
+
+    <div class="cmp-table" role="table">
+      <div class="cmp-row cmp-header-row" role="row">
+        <div class="cmp-cell cmp-cell-feature" role="columnheader"></div>
+        <div class="cmp-cell cmp-cell-conc" role="columnheader">
+          <div class="cmp-tier-name">Concierge</div>
+          <div class="cmp-tier-sub">Default for first-timers</div>
+        </div>
+        <div class="cmp-cell cmp-cell-atel" role="columnheader">
+          <div class="cmp-tier-name">Atelier</div>
+          <div class="cmp-tier-sub">For experienced founders</div>
+        </div>
+      </div>
+
+      <div class="cmp-row" role="row">
+        <div class="cmp-cell cmp-cell-feature" role="rowheader">Curated factory network</div>
+        <div class="cmp-cell cmp-cell-conc"><span class="cmp-check" aria-label="Included"></span></div>
+        <div class="cmp-cell cmp-cell-atel"><span class="cmp-check" aria-label="Included"></span></div>
+      </div>
+
+      <div class="cmp-row" role="row">
+        <div class="cmp-cell cmp-cell-feature" role="rowheader">Concierge expertise on every decision</div>
+        <div class="cmp-cell cmp-cell-conc"><span class="cmp-check"></span></div>
+        <div class="cmp-cell cmp-cell-atel"><span class="cmp-check"></span></div>
+      </div>
+
+      <div class="cmp-row" role="row">
+        <div class="cmp-cell cmp-cell-feature" role="rowheader">Routine decisions handled for you</div>
+        <div class="cmp-cell cmp-cell-conc"><span class="cmp-check"></span></div>
+        <div class="cmp-cell cmp-cell-atel"><span class="cmp-dash">you decide</span></div>
+      </div>
+
+      <div class="cmp-row" role="row">
+        <div class="cmp-cell cmp-cell-feature" role="rowheader">Every quote shown side-by-side</div>
+        <div class="cmp-cell cmp-cell-conc"><span class="cmp-dash">summary only</span></div>
+        <div class="cmp-cell cmp-cell-atel"><span class="cmp-check"></span></div>
+      </div>
+
+      <div class="cmp-row" role="row">
+        <div class="cmp-cell cmp-cell-feature" role="rowheader">Sample reviews with annotations</div>
+        <div class="cmp-cell cmp-cell-conc"><span class="cmp-dash">when meaningful</span></div>
+        <div class="cmp-cell cmp-cell-atel"><span class="cmp-check"></span></div>
+      </div>
+
+      <div class="cmp-row" role="row">
+        <div class="cmp-cell cmp-cell-feature" role="rowheader">Material substitutions before they happen</div>
+        <div class="cmp-cell cmp-cell-conc"><span class="cmp-dash">told after</span></div>
+        <div class="cmp-cell cmp-cell-atel"><span class="cmp-check"></span></div>
+      </div>
+
+      <div class="cmp-row" role="row">
+        <div class="cmp-cell cmp-cell-feature" role="rowheader">Full IQC and IPQC reports</div>
+        <div class="cmp-cell cmp-cell-conc"><span class="cmp-dash">&mdash;</span></div>
+        <div class="cmp-cell cmp-cell-atel"><span class="cmp-check"></span></div>
+      </div>
+
+      <div class="cmp-row" role="row">
+        <div class="cmp-cell cmp-cell-feature" role="rowheader">Final QC report</div>
+        <div class="cmp-cell cmp-cell-conc"><span class="cmp-check"></span></div>
+        <div class="cmp-cell cmp-cell-atel"><span class="cmp-check"></span></div>
+      </div>
+
+      <div class="cmp-row" role="row">
+        <div class="cmp-cell cmp-cell-feature" role="rowheader">Project journal</div>
+        <div class="cmp-cell cmp-cell-conc"><span class="cmp-check"></span></div>
+        <div class="cmp-cell cmp-cell-atel"><span class="cmp-check"></span></div>
+      </div>
+
+      <div class="cmp-row cmp-row-num" role="row">
+        <div class="cmp-cell cmp-cell-feature" role="rowheader">Decisions reaching you</div>
+        <div class="cmp-cell cmp-cell-conc"><span class="cmp-num">3&ndash;5</span></div>
+        <div class="cmp-cell cmp-cell-atel"><span class="cmp-num">15&ndash;25</span></div>
+      </div>
+
+      <div class="cmp-row cmp-row-num" role="row">
+        <div class="cmp-cell cmp-cell-feature" role="rowheader">Updates per week</div>
+        <div class="cmp-cell cmp-cell-conc"><span class="cmp-num">~1</span></div>
+        <div class="cmp-cell cmp-cell-atel"><span class="cmp-num">3&ndash;5</span></div>
+      </div>
+
+      <div class="cmp-row cmp-row-num cmp-row-last" role="row">
+        <div class="cmp-cell cmp-cell-feature" role="rowheader">Price</div>
+        <div class="cmp-cell cmp-cell-conc"><span class="cmp-num">Scope-based</span></div>
+        <div class="cmp-cell cmp-cell-atel"><span class="cmp-num">Same</span></div>
+      </div>
+    </div>
+
+    <footer class="cmp-foot">
+      <p class="cmp-foot-note">You can switch tiers any time before sourcing closes &mdash; just tell your contact.</p>
+      <div class="cmp-foot-actions">
+        <button class="cmp-pick" type="button" data-pick="concierge">Pick Concierge</button>
+        <button class="cmp-pick cmp-pick-alt" type="button" data-pick="self">Pick Atelier</button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<!-- Reveal overlay (unchanged behavior) -->
+<div class="reveal" id="reveal" data-mode="concierge" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="reveal-card">
+    <div class="rc-band" aria-hidden="true"></div>
+    <header class="rc-header">
+      <div class="rc-hd-left">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M13.2 3.1 a9 9 0 1 1 -2.4 0" />
+          <path d="M11 20.4 a6 6 0 1 1 2 0" />
+          <path d="M13 6.6 a3 3 0 1 1 -2 0" />
+          <circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none" />
+        </svg>
+        <span class="rc-hd-label" id="rvDesk">Ariadne · Concierge desk</span>
+      </div>
+      <div class="rc-ticket">Reference <b id="rvTicket">A‑1827</b></div>
+    </header>
+    <section class="rc-body">
+      <div class="rc-seal" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M13.2 3.1 a9 9 0 1 1 -2.4 0" />
+          <path d="M11 20.4 a6 6 0 1 1 2 0" />
+          <path d="M13 6.6 a3 3 0 1 1 -2 0" />
+          <circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none" />
+        </svg>
+      </div>
+      <div class="rc-eyebrow"><span class="dot"></span><span id="rvKicker">Brief received — lamp no. 04</span></div>
+      <h2 class="rc-line" id="rvLine">An expert will reach out within the day.</h2>
+      <p class="rc-sub" id="rvSub">They'll review your brief and design, then contact you in your timezone. Expect a reply within 24 hours.</p>
+    </section>
+    <div class="rc-tile rc-contact">
+      <div class="rc-portrait" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
+          <path d="M13.2 3.1 a9 9 0 1 1 -2.4 0" />
+          <path d="M11 20.4 a6 6 0 1 1 2 0" />
+          <path d="M13 6.6 a3 3 0 1 1 -2 0" />
+          <circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none" />
+        </svg>
+      </div>
+      <div class="rc-tile-meta">
+        <div class="rc-tile-name">Concierge expert</div>
+        <div class="rc-tile-role">Reviewing your brief</div>
+      </div>
+      <div class="rc-tile-resp">
+        <span class="rc-resp-label">First reply</span>
+        <span class="rc-resp-time">within 24 hours</span>
+      </div>
+    </div>
+    <div class="rc-tile rc-milestones">
+      <div class="rc-mtitle">Milestones you'll hear about</div>
+      <div class="rc-mrow">
+        <div class="rc-mstep"><span class="rc-mdot"></span>Sourcing closed</div>
+        <span class="rc-mline"></span>
+        <div class="rc-mstep"><span class="rc-mdot"></span>Sample ships</div>
+        <span class="rc-mline"></span>
+        <div class="rc-mstep"><span class="rc-mdot"></span>Box leaves the warehouse</div>
+      </div>
+    </div>
+    <footer class="rc-footer">
+      <div class="rc-foot-left">Quote returning in <b>48 hours</b> · Two business days.</div>
+      <div class="rc-foot-right">
+        <a href="#" class="rc-back" id="rvBack">Back to the brief</a>
+        <button class="rc-cta" type="button">Open project</button>
+      </div>
+    </footer>
+  </div>
+</div>
+
+<script>
+(() => {
+  // ─── State ────────────────────────────────────────────────────────────
+  const state = {
+    audience:  null,           // 'myself' | 'customers'
+    quantity:  null,
+    material:  'premium',      // default — our 1× baseline
+    timeline:  'tight',        // default — our 1× baseline
+    notes:     '',
+    mode:      'concierge',
+  };
+
+  const $  = (s, r=document) => r.querySelector(s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  function setPressed(buttons, val) {
+    buttons.forEach(b => b.setAttribute('aria-pressed', b.dataset.val === val ? 'true' : 'false'));
+  }
+
+  // ─── The Gate ─────────────────────────────────────────────────────────
+  const doorBtns = $$('.door');
+  const doorsWrap = $('#gateDoors');
+  const grVal = $('#grVal');
+
+  function openGate(val) {
+    state.audience = val;
+    doorBtns.forEach(b => {
+      const on = b.dataset.val === val;
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      b.setAttribute('aria-checked', on ? 'true' : 'false');
+    });
+    doorsWrap.classList.add('committed');
+    document.body.setAttribute('data-gate', 'open');
+    document.body.setAttribute('data-audience', val);
+    grVal.textContent = val === 'myself' ? 'myself' : 'my customers';
+    renderQuantity();
+    renderRecommendCopy();
+    renderPath();
+    renderLedger();
+    maybeEnableSubmit();
+  }
+
+  function closeGate() {
+    state.audience = null;
+    state.quantity = null;
+    doorBtns.forEach(b => {
+      b.setAttribute('aria-pressed', 'false');
+      b.setAttribute('aria-checked', 'false');
+    });
+    doorsWrap.classList.remove('committed');
+    document.body.setAttribute('data-gate', 'closed');
+    document.body.removeAttribute('data-audience');
+    renderQuantity();
+    renderPath();
+    renderLedger();
+    maybeEnableSubmit();
+    // Scroll the gate back into view
+    doorsWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  doorBtns.forEach(b => b.addEventListener('click', () => openGate(b.dataset.val)));
+  $('#grChange').addEventListener('click', closeGate);
+
+  // ─── Path ─────────────────────────────────────────────────────────────
+  const PATH_PERSONAL = [
+    { id: 'sourcing',    label: 'Sourcing',    note: '01' },
+    { id: 'quality',     label: 'Quality',     note: '02' },
+    { id: 'fulfillment', label: 'Fulfillment', note: '03' },
+  ];
+  const PATH_BUSINESS = [
+    { id: 'sourcing',      label: 'Sourcing',      note: '01' },
+    { id: 'manufacturing', label: 'Manufacturing', note: '02' },
+    { id: 'quality',       label: 'Quality',       note: '03' },
+    { id: 'fulfillment',   label: 'Fulfillment',   note: '04' },
+    { id: 'insights',      label: 'Insights',      note: '05' },
+  ];
+
+  // ─── Quantity ─────────────────────────────────────────────────────────
+  const QTY_PERSONAL = [
+    { v: 'one', label: 'Just one.' },
+    { v: 'two', label: 'Two.' },
+    { v: 'few', label: 'A few (3\u20135)' },
+  ];
+  const QTY_CUSTOMERS = [
+    { v: '5-20',    label: 'A handful (5\u201320)' },
+    { v: '20-100',  label: 'A short run (20\u2013100)' },
+    { v: '100-500', label: 'A run (100\u2013500)' },
+    { v: '500+',    label: 'A batch (500+)' },
+    { v: 'ask',     label: 'Expert recommendation', ask: true },
+  ];
+  const QTY_LABELS = {
+    one: 'Just one', two: 'Two', few: 'A few (3\u20135)',
+    '5-20': 'A handful (5\u201320)',
+    '20-100': 'A short run (20\u2013100)',
+    '100-500': 'A run (100\u2013500)',
+    '500+': 'A batch (500+)',
+    ask: 'From the desk',
+  };
+
+  function renderQuantity() {
+    const opts = state.audience === 'customers' ? QTY_CUSTOMERS
+               : state.audience === 'myself'    ? QTY_PERSONAL
+               : null;
+    const wrap = $('#qtyOpts');
+    const rec  = $('.recommend[data-rec="quantity"]');
+    if (!wrap) return;
+    if (!opts) {
+      wrap.innerHTML = '<span class="sub-opt" style="opacity:0.45;border-style:dashed;pointer-events:none;color:var(--ink-3);">open a door above first</span>';
+      return;
+    }
+    if (state.quantity && !state.quantity.startsWith('custom:') && !opts.find(o => o.v === state.quantity)) {
+      state.quantity = null;
+      rec.classList.remove('in');
+    }
+    const buttonsHTML = opts.map(o =>
+      '<button class="sub-opt' + (o.ask ? ' ask' : '') +
+      '" data-val="' + o.v + '" aria-pressed="' + (state.quantity === o.v) + '">' +
+      o.label + '</button>'
+    ).join('');
+    const typedVal = (state.quantity && state.quantity.startsWith('custom:'))
+      ? state.quantity.slice('custom:'.length) : '';
+    const typedHTML = '<label class="sub-opt-typed" data-val="custom" aria-pressed="' +
+      (typedVal ? 'true' : 'false') + '">' +
+      '<span>or, exactly</span>' +
+      '<input type="number" min="1" inputmode="numeric" placeholder="\u2014" value="' + typedVal + '" aria-label="Exact quantity" />' +
+      '</label>';
+    wrap.innerHTML = buttonsHTML + typedHTML;
+
+    const buttons = $$('.sub-opt', wrap);
+    const typed   = $('.sub-opt-typed', wrap);
+    const input   = $('input', typed);
+
+    function commitButton(val) {
+      state.quantity = val;
+      buttons.forEach(b => b.setAttribute('aria-pressed', b.dataset.val === val ? 'true' : 'false'));
+      typed.setAttribute('aria-pressed', 'false');
+      input.value = '';
+      rec.classList.toggle('in', val === 'ask');
+      renderLedger();
+      maybeEnableSubmit();
+    }
+    function commitTyped() {
+      const n = parseInt(input.value, 10);
+      if (n && n > 0) {
+        state.quantity = 'custom:' + n;
+        buttons.forEach(b => b.setAttribute('aria-pressed', 'false'));
+        typed.setAttribute('aria-pressed', 'true');
+        rec.classList.remove('in');
+      } else {
+        if (state.quantity && state.quantity.startsWith('custom:')) state.quantity = null;
+        typed.setAttribute('aria-pressed', 'false');
+      }
+      renderLedger();
+      maybeEnableSubmit();
+    }
+    buttons.forEach(btn => btn.addEventListener('click', () => commitButton(btn.dataset.val)));
+    input.addEventListener('input', commitTyped);
+    input.addEventListener('blur', commitTyped);
+    typed.addEventListener('click', (e) => { if (e.target === typed || e.target.tagName === 'SPAN') input.focus(); });
+  }
+
+  function renderRecommendCopy() {
+    const qEl = $('#recQty'), mEl = $('#recMat'), tEl = $('#recTime');
+    const REVIEW_MSG = 'Leave this with us. A human reviews your brief and returns a real answer with the quote.';
+    if (qEl) qEl.innerHTML = REVIEW_MSG;
+    if (mEl) mEl.innerHTML = REVIEW_MSG;
+    if (tEl) tEl.innerHTML = REVIEW_MSG;
+  }
+
+  function renderPath() {
+    const strip = $('#pathStrip');
+    const note  = $('#pathNote');
+    if (!state.audience) {
+      strip.innerHTML = '';
+      if (note) note.textContent = 'Open a door above to see the path.';
+      return;
+    }
+    const steps = state.audience === 'customers' ? PATH_BUSINESS : PATH_PERSONAL;
+    strip.innerHTML = '';
+    steps.forEach((step, i) => {
+      if (i > 0) {
+        const arr = document.createElement('span');
+        arr.className = 'path-arrow';
+        strip.appendChild(arr);
+        requestAnimationFrame(() => arr.classList.add('in'));
+      }
+      const chip = document.createElement('span');
+      chip.className = 'path-chip';
+      chip.style.transitionDelay = (60 + i * 120) + 'ms';
+      chip.innerHTML = `<span class="pc-n">${step.note}</span>${step.label}`;
+      strip.appendChild(chip);
+      requestAnimationFrame(() => chip.classList.add('in'));
+    });
+    if (note) note.textContent = state.audience === 'customers'
+      ? 'Five stages. Supplier, factory, QC, freight, and post-launch.'
+      : 'Three stages. Supplier, QC, doorstep.';
+  }
+
+  // ─── Sub questions ───────────────────────────────────────────────────
+  function wireSub(name) {
+    const root = $(`.sub[data-sub="${name}"]`);
+    const rec  = $(`.recommend[data-rec="${name}"]`);
+    root.addEventListener('click', (e) => {
+      const btn = e.target.closest('.sub-opt');
+      if (!btn) return;
+      const opts = $$('.sub-opt', root);
+      state[name] = btn.dataset.val;
+      setPressed(opts, btn.dataset.val);
+      rec.classList.toggle('in', btn.dataset.val === 'ask');
+      renderLedger();
+      maybeEnableSubmit();
+    });
+  }
+  wireSub('material');
+  wireSub('timeline');
+
+  // ─── Notes ───────────────────────────────────────────────────────────
+  $('#notes').addEventListener('input', (e) => { state.notes = e.target.value; });
+
+  // ─── Mode ────────────────────────────────────────────────────────────
+  const choiceBtns = $$('.choice');
+  choiceBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      state.mode = btn.dataset.val;
+      choiceBtns.forEach(b => b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
+      // Both tiers are equally important — keep the warm thread lit for either choice.
+      document.body.setAttribute('data-concierge', 'on');
+      renderLedger();
+    });
+  });
+
+  function maybeEnableSubmit() {
+    const ready = state.audience && state.quantity && state.material && state.timeline;
+    $('#submitBtn').disabled = !ready;
+  }
+
+  // ─── Ledger ──────────────────────────────────────────────────────────
+  const LABELS = {
+    quantity: QTY_LABELS,
+    material: {
+      'budget':   'Budget tier',
+      'mid':      'Mid-market',
+      'premium':  'Premium',
+      'bespoke':  'Bespoke',
+      'ask':      'From the desk — premium',
+    },
+    timeline: {
+      'flexible':  'Flexible',
+      'normal':    'Normal',
+      'tight':     'Tight',
+      'rush':      'Rush',
+      'emergency': 'Emergency',
+      'ask':       'From the desk — normal',
+    },
+  };
+
+  function renderLedger() {    const rows = [];
+    rows.push({ k: 'For',      v: state.audience === 'myself' ? 'Yourself' : state.audience === 'customers' ? 'Your customers' : 'not yet' });
+    if (state.quantity) {
+      if (state.quantity.startsWith && state.quantity.startsWith('custom:')) {
+        const n = state.quantity.slice('custom:'.length);
+        rows.push({ k: 'Quantity', v: n + ' ' + (n === '1' ? 'piece' : 'pieces') });
+      } else {
+        rows.push({ k: 'Quantity', v: LABELS.quantity[state.quantity] });
+      }
+    }
+    if (state.material)  rows.push({ k: 'Material', v: LABELS.material[state.material] });
+    if (state.timeline)  rows.push({ k: 'Timeline', v: LABELS.timeline[state.timeline] });
+    rows.push({ k: 'Run by',  v: state.mode === 'concierge' ? 'Ariadne Concierge' : 'Ariadne Atelier' });    const wrap = $('#ledger');
+    wrap.innerHTML = '';
+    rows.forEach((r, i) => {
+      const row = document.createElement('div');
+      row.className = 'ledger-row';
+      row.style.transitionDelay = (i * 70) + 'ms';
+      row.innerHTML = `<div class="lr-k">${r.k}</div><div class="lr-v">${r.v}</div>`;
+      wrap.appendChild(row);
+      requestAnimationFrame(() => row.classList.add('in'));
+    });
+    renderPriceImpact();
+  }
+
+  // ─── Price impact ────────────────────────────────────────────────────
+  // Multipliers per choice. "ask" assumes the recommendation we give.
+  const MULT_QTY = {
+    one: 1.00, two: 1.00, few: 1.00,
+    '5-20':    0.62,
+    '20-100':  0.57,
+    '100-500': 0.50,
+    '500+':    0.40,
+    ask:       0.62,
+  };
+  const MULT_MAT = {
+    // Premium is the default baseline (1×). Other tiers show as further
+    // savings (or further premium for bespoke).
+    budget:  0.35, mid: 0.55, premium: 1.00, bespoke: 2.00, ask: 1.00,
+  };
+  const MULT_TIME = {
+    // Tight is the default baseline (1×). Slower options unlock savings;
+    // faster options carry a premium.
+    flexible: 0.55, normal: 0.80, tight: 1.00, rush: 1.60, emergency: 2.40, ask: 1.00,
+  };
+
+  // Map a multiplier onto the 0..1 track. Anchor 1× sits at 33%; sub-1
+  // sits to the left, super-1 to the right. m/(m+2) curve.
+  function pos(m) { return Math.max(0.04, Math.min(0.96, m / (m + 2))); }
+  const ANCHOR = pos(1); // 1/3
+
+  function multFromQty(v) {
+    if (!v) return null;
+    if (v.startsWith && v.startsWith('custom:')) {
+      const n = parseInt(v.slice('custom:'.length), 10);
+      if (!n) return null;
+      if (n >= 1000) return 0.30;
+      if (n >= 500)  return 0.40;
+      if (n >= 100)  return 0.50;
+      if (n >= 20)   return 0.57;
+      if (n >= 5)    return 0.62;
+      return 1.00;
+    }
+    return MULT_QTY[v] ?? null;
+  }
+
+  function fmtMult(m) {
+    if (m == null) return '\u2014';
+    // 1 decimal, drop trailing .0
+    const r = Math.round(m * 100) / 100;
+    return (Math.abs(r - Math.round(r)) < 0.01 ? r.toFixed(0) : r.toFixed(r < 10 ? 2 : 1)).replace(/\.?0+$/, '') + '\u00d7';
+  }
+
+  function renderPriceImpact() {
+    const pi = document.getElementById('priceImpact');
+    if (!pi) return;
+    const qty  = multFromQty(state.quantity);
+    const mat  = state.material ? MULT_MAT[state.material]  : null;
+    const time = state.timeline ? MULT_TIME[state.timeline] : null;
+
+    const factors = [
+      ['quantity', qty],
+      ['material', mat],
+      ['timeline', time],
+    ];
+    factors.forEach(([name, m]) => {
+      const row = pi.querySelector(`.pi-row[data-factor="${name}"]`);
+      if (!row) return;
+      const fill = row.querySelector('.pi-fill');
+      const dot  = row.querySelector('.pi-dot');
+      const mult = row.querySelector('.pi-mult');
+      if (m == null) {
+        row.classList.remove('set', 'cheaper', 'pricier');
+        fill.style.left = (ANCHOR * 100) + '%';
+        fill.style.width = '0%';
+        dot.style.left = (ANCHOR * 100) + '%';
+        mult.textContent = '\u2014';
+        return;
+      }
+      const p = pos(m);
+      const left  = Math.min(p, ANCHOR);
+      const right = Math.max(p, ANCHOR);
+      fill.style.left  = (left * 100) + '%';
+      fill.style.width = ((right - left) * 100) + '%';
+      dot.style.left   = (p * 100) + '%';
+      mult.textContent = fmtMult(m);
+      row.classList.add('set');
+      row.classList.toggle('cheaper', m < 1);
+      row.classList.toggle('pricier', m > 1);
+      row.classList.toggle('neutral', Math.abs(m - 1) < 0.001);
+    });
+
+    // Combined → vs Store Retail comparison
+    const piEl   = pi;
+    const figEl  = pi.querySelector('#piSavings');
+    const capEl  = pi.querySelector('#piSavingsCaption');
+    const fillEl = pi.querySelector('#piRetailFill');
+    const markBase  = pi.querySelector('#piMarkBaseline');
+    const markYou   = pi.querySelector('#piMarkYou');
+    const markStore = pi.querySelector('#piMarkStore');
+
+    // Baseline (1× Ariadne) = Premium material + Tight timeline,
+    // which is ~35% of comparable store retail.
+    const BASELINE_OF_RETAIL = 0.35;
+
+    if (qty != null && mat != null && time != null) {
+      const combined = qty * mat * time;          // multiplier vs OUR baseline
+      const youOfRetail = BASELINE_OF_RETAIL * combined; // fraction of store retail
+      const savings = (1 - youOfRetail) * 100;    // positive = cheaper than retail
+
+      // Normalize bar so all three markers fit with headroom.
+      const maxVal = Math.max(youOfRetail, 1.0) * 1.12;
+      const posBase  = (BASELINE_OF_RETAIL / maxVal) * 100;
+      const posYou   = (youOfRetail        / maxVal) * 100;
+      const posStore = (1.0                / maxVal) * 100;
+
+      markBase.style.left  = posBase  + '%';
+      markYou.style.left   = posYou   + '%';
+      markStore.style.left = posStore + '%';
+
+      // Fill: from 0 up to "you"
+      fillEl.style.width = posYou + '%';
+
+      // Figure + caption
+      if (savings >= 0) {
+        figEl.textContent = '\u2212' + Math.round(savings) + '%';
+        capEl.textContent = 'vs. comparable in stores';
+        piEl.classList.add('savings-positive');
+        piEl.classList.remove('savings-negative');
+      } else {
+        figEl.textContent = '+' + Math.round(-savings) + '%';
+        capEl.textContent = 'over store retail \u2014 it\u2019s bespoke at speed';
+        piEl.classList.remove('savings-positive');
+        piEl.classList.add('savings-negative');
+      }
+
+      // Stack "You" label above or below to avoid overlap with baseline marker
+      const tooClose = Math.abs(posYou - posBase) < 14;
+      markYou.classList.toggle('stack-above', tooClose && posYou < posBase);
+      markYou.classList.toggle('stack-below', tooClose && posYou >= posBase);
+
+      piEl.classList.add('ready');
+    } else {
+      figEl.textContent = '\u2014';
+      capEl.textContent = 'make a choice to see your price';
+      fillEl.style.width = '0%';
+      markBase.style.left  = (BASELINE_OF_RETAIL / 1.12 * 100) + '%';
+      markYou.style.left   = (BASELINE_OF_RETAIL / 1.12 * 100) + '%';
+      markStore.style.left = (1.0 / 1.12 * 100) + '%';
+      markYou.classList.remove('stack-above', 'stack-below');
+      piEl.classList.remove('ready', 'savings-positive', 'savings-negative');
+    }
+  }
+
+  // ─── Submit → reveal ─────────────────────────────────────────────────
+  const reveal = $('#reveal');
+  const openProjectBtn = $('.rc-cta');
+  let currentProject = null;   // { id, reference } once the brief is filed
+
+  async function fileBrief() {
+    const brief = {
+      audience:  state.audience,
+      quantity:  state.quantity,
+      material:  state.material,
+      timeline:  state.timeline,
+      notes:     state.notes,
+      mode:      state.mode,
+    };
+    const res = await fetch('/api/projects', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(brief),
+    });
+    if (!res.ok) throw new Error('brief POST failed: ' + res.status);
+    return res.json();   // { id, reference }
+  }
+
+  if (openProjectBtn) {
+    openProjectBtn.addEventListener('click', () => {
+      if (!currentProject) return;
+      window.location.href =
+        '/Project%20Dashboard.html?p=' + encodeURIComponent(currentProject.id);
+    });
+  }
+
+  $('#submitBtn').addEventListener('click', async () => {
+    const concierge = state.mode === 'concierge';
+    reveal.setAttribute('data-mode', concierge ? 'concierge' : 'self');
+    if (concierge) {
+      $('#rvDesk').textContent = 'Ariadne · Concierge desk';
+      $('#rvKicker').textContent = 'Brief received — lamp no. 04';
+      $('#rvLine').innerHTML = 'An expert will reach out within the day.';
+      $('#rvSub').textContent = 'They\u2019ve read your notes and your design. You\u2019ll hear from them in your timezone. If anything moves before then, they\u2019ll say so.';
+    } else {
+      $('#rvDesk').textContent = 'Ariadne · Atelier desk';
+      $('#rvKicker').textContent = 'Brief received — lamp no. 04';
+      $('#rvLine').innerHTML = 'Every quote, sample, and decision will cross your desk.';
+      $('#rvSub').textContent = 'You\u2019ll see every supplier quote side-by-side, annotated sample reviews, and material substitutions before they happen. Expect 3\u20135 updates per week.';
+    }
+    // Open the reveal immediately; file the brief in the background and swap
+    // in the real server reference once it lands.
+    currentProject = null;
+    if (openProjectBtn) {
+      openProjectBtn.disabled = true;
+      openProjectBtn.textContent = 'Filing brief\u2026';
+    }
+    $('#rvTicket').textContent = '\u2026';
+    reveal.classList.add('on');
+    reveal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('locked');
+
+    try {
+      currentProject = await fileBrief();
+      $('#rvTicket').textContent = currentProject.reference;
+      if (openProjectBtn) {
+        openProjectBtn.disabled = false;
+        openProjectBtn.textContent = 'Open project';
+      }
+    } catch (err) {
+      console.error('[Ariadne] could not file brief:', err);
+      // Keep the reveal usable, but leave "Open project" disabled since
+      // there is no persisted project to open.
+      $('#rvTicket').textContent = 'A-' + (1827 + Math.floor(Math.random() * 200));
+      if (openProjectBtn) openProjectBtn.textContent = 'Backend offline';
+    }
+  });
+  $('#rvBack').addEventListener('click', (e) => {
+    e.preventDefault();
+    reveal.classList.remove('on');
+    reveal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('locked');
+  });
+
+  // ─── Compare modal (Concierge vs Atelier) ────────────────────────────
+  const compare = $('#compare');
+  function openCompare() {
+    if (!compare) return;
+    compare.classList.add('on');
+    compare.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('locked');
+  }
+  function closeCompare() {
+    if (!compare) return;
+    compare.classList.remove('on');
+    compare.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('locked');
+  }
+  const cmpTrigger = $('#openCompare');
+  if (cmpTrigger) cmpTrigger.addEventListener('click', (e) => { e.stopPropagation(); openCompare(); });
+  if (compare) {
+    compare.querySelectorAll('[data-close="compare"]').forEach(el =>
+      el.addEventListener('click', closeCompare)
+    );
+    compare.querySelectorAll('.cmp-pick').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const pick = btn.dataset.pick;
+        const target = $$('.choice').find(b => b.dataset.val === pick);
+        if (target) target.click();
+        closeCompare();
+      });
+    });
+  }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && compare && compare.classList.contains('on')) closeCompare();
+  });
+
+  // ─── Viz well: chip hover → preview animation ────────────────────────
+  const well = $('#vizWell');
+  let activeViz = null;
+  let lockedViz = null;
+  let leaveTimer = null;
+
+  function showViz(name) {
+    if (!window.AriadneVizes) return;
+    const variant = (state.audience === 'myself') ? (name + '_personal') : name;
+    const key = (variant in window.AriadneVizes) ? variant : name;
+    const pick = window.AriadneVizes[key];
+    if (!pick) return;
+    if (activeViz && activeViz.name === key) return;
+    if (activeViz && activeViz.stop) activeViz.stop();
+    well.setAttribute('data-mode', name);
+    well.innerHTML = pick.html;
+    const stop = pick.start(well);
+    activeViz = { name: key, stop };
+  }
+  function hideViz() {
+    if (activeViz && activeViz.stop) activeViz.stop();
+    activeViz = null;
+    well.setAttribute('data-mode', 'hint');
+    well.innerHTML = '<div class="viz-hint"><div><div class="hint-line">Hover a step to see what happens. Click to pin it.</div><div class="hint-arrow"></div></div></div>';
+  }
+
+  function wireChipEvents() {
+    const chips = $$('#pathStrip .path-chip');
+    chips.forEach(chip => {
+      const id = chip.dataset.id;
+      if (!id) return;
+      chip.addEventListener('mouseenter', () => { clearTimeout(leaveTimer); showViz(id); });
+      chip.addEventListener('focus', () => showViz(id));
+      chip.addEventListener('click', () => {
+        chips.forEach(c => c.classList.toggle('active', c === chip));
+        lockedViz = id;
+        showViz(id);
+      });
+    });
+    const strip = $('#pathStrip');
+    if (strip) {
+      strip.addEventListener('mouseleave', () => {
+        clearTimeout(leaveTimer);
+        leaveTimer = setTimeout(() => {
+          if (lockedViz) { showViz(lockedViz); return; }
+          hideViz();
+        }, 220);
+      });
+    }
+  }
+  const _origRenderPath = renderPath;
+  renderPath = function() {
+    _origRenderPath();
+    const steps = state.audience === 'customers' ? PATH_BUSINESS : PATH_PERSONAL;
+    const chips = $$('#pathStrip .path-chip');
+    chips.forEach((chip, i) => {
+      const step = steps[i];
+      if (step) chip.dataset.id = step.id;
+      chip.setAttribute('tabindex', '0');
+      chip.setAttribute('role', 'button');
+    });
+    wireChipEvents();
+    if (lockedViz && !steps.find(s => s.id === lockedViz)) {
+      lockedViz = null;
+      hideViz();
+    }
+  };
+
+  // Initial
+  // Reflect default selections in the form
+  document.querySelectorAll('.sub[data-sub="material"] .sub-opt').forEach(b => {
+    b.setAttribute('aria-pressed', b.dataset.val === state.material ? 'true' : 'false');
+  });
+  document.querySelectorAll('.sub[data-sub="timeline"] .sub-opt').forEach(b => {
+    b.setAttribute('aria-pressed', b.dataset.val === state.timeline ? 'true' : 'false');
+  });
+  renderQuantity();
+  renderRecommendCopy();
+  renderPath();
+  renderLedger();
+
+  // ─── Help tooltips: click-to-pin + smart flip ────────────────────────
+  // The panel is position:absolute below the trigger by default. If opening
+  // it would cause it to overflow below the viewport (or push past visible
+  // form content), we flip it upward instead so it never covers the next
+  // question's controls.
+  function positionHelp(el) {
+    const panel = el.querySelector('.help-panel');
+    if (!panel) return;
+    // Reset so we measure the panel in its default downward placement.
+    el.classList.remove('flip-up');
+    // Force reflow + read.
+    const triggerRect = el.getBoundingClientRect();
+    const panelH = panel.offsetHeight;
+    const spaceBelow = window.innerHeight - triggerRect.bottom - 16;
+    const spaceAbove = triggerRect.top - 16;
+    if (panelH + 12 > spaceBelow && spaceAbove > spaceBelow) {
+      el.classList.add('flip-up');
+    }
+  }
+  document.querySelectorAll('.help').forEach(el => {
+    const trigger = el.querySelector('.help-trigger');
+    if (!trigger) return;
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const wasOpen = el.classList.contains('open');
+      // close any other pinned panels
+      document.querySelectorAll('.help.open').forEach(o => {
+        o.classList.remove('open');
+        o.classList.remove('flip-up');
+      });
+      if (!wasOpen) {
+        el.classList.add('open');
+        positionHelp(el);
+      }
+    });
+    el.addEventListener('mouseenter', () => positionHelp(el));
+    el.addEventListener('focusin',    () => positionHelp(el));
+    el.addEventListener('mouseleave', () => {
+      if (!el.classList.contains('open')) el.classList.remove('flip-up');
+    });
+  });
+  window.addEventListener('resize', () => {
+    document.querySelectorAll('.help.open').forEach(positionHelp);
+  });
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.help.open').forEach(o => o.classList.remove('open'));
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.help.open').forEach(o => o.classList.remove('open'));
+    }
+  });
+})();
+</script>
+<script src="Ariadne Concierge - vizes.js"></script>
+
+</body>
+</html>

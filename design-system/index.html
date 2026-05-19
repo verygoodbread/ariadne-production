@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ariadne — Design System</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="ds.css">
+<style>
+  .home-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); margin-top: 36px; }
+  .tile { display: block; border: 1px solid var(--rule); border-radius: var(--r-card-lg); padding: 26px 22px; transition: border-color 240ms var(--ease), transform 240ms var(--ease); }
+  .tile:hover { border-color: var(--accent-soft); transform: translateY(-2px); text-decoration: none; }
+  .tile h3 { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: 22px; color: var(--ink-2); margin-bottom: 6px; }
+  .tile p { font-size: 13px; color: var(--ink-2-mid); margin: 0; }
+  .tile .n { font-family: var(--sans); font-size: 12px; color: var(--ink-2-low); letter-spacing: 0.12em; }
+  .lockup { display: flex; align-items: center; gap: 12px; margin: 30px 0 6px; }
+  .lockup svg { width: 34px; height: 34px; color: #fff5e1;
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--spark) 45%, transparent)) drop-shadow(0 0 28px color-mix(in srgb, var(--accent) 25%, transparent)); }
+  .lockup .wm { font-family: var(--serif); font-style: italic; font-weight: 500; font-size: 26px; color: #fff7e6; }
+</style>
+</head>
+<body>
+  <nav class="ds-nav">
+    <a class="ds-home" href="index.html" aria-current>Ariadne</a>
+    <a href="logo.html">Logo</a>
+    <a href="colours.html">Colours</a>
+    <a href="typography.html">Typography</a>
+    <a href="spacing.html">Spacing &amp; layout</a>
+    <a href="motion.html">Motion</a>
+    <a href="interaction.html">Interaction</a>
+  </nav>
+
+  <div class="lockup" aria-label="Ariadne">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M13.2 3.1 a9 9 0 1 1 -2.4 0" />
+      <path d="M11 20.4 a6 6 0 1 1 2 0" />
+      <path d="M13 6.6 a3 3 0 1 1 -2 0" />
+      <circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none" />
+    </svg>
+    <span class="wm">Ariadne</span>
+  </div>
+
+  <h1>Design&nbsp;system</h1>
+  <p class="lede">The reusable parts of the Ariadne landing page — pulled out of one long HTML file into rooms you can walk through.</p>
+  <p>Every page below imports <code>tokens.css</code>, the single source of truth. Change a value there and the swatches, type samples and the product all move together. Open this folder's <code>index.html</code> in a browser to browse.</p>
+
+  <div class="home-grid">
+    <a class="tile" href="logo.html">
+      <div class="n">01</div><h3>Logo</h3>
+      <p>The labyrinth mark, the wordmark, the lockup, clear-space and don'ts.</p>
+    </a>
+    <a class="tile" href="colours.html">
+      <div class="n">02</div><h3>Colours</h3>
+      <p>Core palette, the surface/ink set, and the nine scroll-driven palettes.</p>
+    </a>
+    <a class="tile" href="typography.html">
+      <div class="n">03</div><h3>Typography</h3>
+      <p>The two typefaces and the fluid type scale, shown at real size.</p>
+    </a>
+    <a class="tile" href="spacing.html">
+      <div class="n">04</div><h3>Spacing &amp; layout</h3>
+      <p>Fluid <code>clamp()</code> rhythm, content widths and corner radii.</p>
+    </a>
+    <a class="tile" href="motion.html">
+      <div class="n">05</div><h3>Motion</h3>
+      <p>The one easing curve and the duration bands behind every transition.</p>
+    </a>
+    <a class="tile" href="interaction.html">
+      <div class="n">06</div><h3>Interaction &amp; animation</h3>
+      <p>The scroll-driven stepper, the puzzle nav, viz entrances and the film reveal — documented to be rebuilt.</p>
+    </a>
+  </div>
+
+  <footer>Ariadne Labs — design system · tokens extracted from <code>project/The Thread v4.html</code></footer>
+</body>
+</html>

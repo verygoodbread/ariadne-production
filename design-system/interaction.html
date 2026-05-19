@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Interaction &amp; animation — Ariadne Design System</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="ds.css">
+<style>
+  .diagram { border:1px solid var(--rule); border-radius:var(--r-card); padding:20px; margin-top:18px; }
+  .track { display:grid; grid-template-columns:repeat(8,1fr); gap:2px; }
+  .bk { height:46px; border-radius:3px; background:rgba(241,235,222,0.06); display:flex; align-items:center; justify-content:center; font-family:var(--sans); font-size:10px; color:var(--ink-2-low); letter-spacing:0.04em; }
+  .bk.step { background:var(--accent-soft); color:var(--selection-ink); }
+  .track-labels { display:grid; grid-template-columns:repeat(8,1fr); gap:2px; margin-top:6px; }
+  .track-labels span { font-family:var(--sans); font-size:9.5px; color:var(--ink-2-low); text-align:center; letter-spacing:0.03em; }
+  .pieces { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--rule); padding:1px; border-radius:var(--r-pill); max-width:520px; margin-top:18px; }
+  .pc { background:rgba(28,18,10,0.20); padding:14px 12px; }
+  .pc .n { font-family:var(--sans); font-size:11px; color:var(--ink-2-low); letter-spacing:0.04em; }
+  .pc .l { font-family:var(--serif); font-size:15px; color:var(--ink-2-mid); }
+  .pc.active { background:var(--ink-2); }
+  .pc.active .n { color:color-mix(in srgb,var(--ink) 55%,transparent); }
+  .pc.active .l { color:var(--ink); }
+  .pc.companion { background:rgba(28,18,10,0.55); border:1px solid color-mix(in srgb,var(--accent) 40%,transparent); }
+  .pc.empty { background:radial-gradient(circle at 50% 60%, color-mix(in srgb,var(--accent) 12%,transparent), transparent 70%); border:1px dashed color-mix(in srgb,var(--accent) 45%,transparent); }
+  .pc.empty .l { font-style:italic; color:#fff5e1; }
+  .pc.empty .n { color:color-mix(in srgb,var(--accent) 65%,transparent); }
+  .steps-list { display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+  .steps-list code { font-size:12px; }
+  .seq { border-left:2px solid var(--accent); padding-left:18px; margin:18px 0; }
+  .seq li { color:var(--ink-2-mid); font-size:14px; margin:7px 0; }
+  .seq li b { color:var(--ink-2); font-family:var(--sans); font-weight:600; font-size:13px; }
+</style>
+</head>
+<body>
+  <nav class="ds-nav">
+    <a class="ds-home" href="index.html">Ariadne</a>
+    <a href="logo.html">Logo</a>
+    <a href="colours.html">Colours</a>
+    <a href="typography.html">Typography</a>
+    <a href="spacing.html">Spacing &amp; layout</a>
+    <a href="motion.html">Motion</a>
+    <a href="interaction.html" aria-current>Interaction</a>
+  </nav>
+
+  <h1>Interaction &amp; animation</h1>
+  <p class="lede">The signature behaviours, written down so they can be rebuilt — not just admired.</p>
+  <p>This page documents the page's <em>moving</em> parts as reusable patterns. For the easing curve and the duration bands every one of these obeys, see <a href="motion.html">Motion</a>.</p>
+
+  <h2>1 · The scroll-driven ops stepper</h2>
+  <p>The product's centrepiece. A tall scroll region drives a pinned frame through seven steps — scrolling <em>is</em> the timeline; nothing autoplays.</p>
+
+  <div class="diagram">
+    <div class="track">
+      <div class="bk">lead-in</div>
+      <div class="bk step">01</div><div class="bk step">02</div><div class="bk step">03</div>
+      <div class="bk step">04</div><div class="bk step">05</div><div class="bk step">06</div>
+      <div class="bk step">07</div>
+    </div>
+    <div class="track-labels">
+      <span>·</span><span>design</span><span>validation</span><span>sourcing</span><span>manuf.</span><span>quality</span><span>fulfil.</span><span>insights</span>
+    </div>
+  </div>
+  <p style="margin-top:14px">The scroll track is <code>height: calc(8 * 100vh)</code> — eight viewport-tall buckets: a lead-in plus the seven steps. The viz panel is a child with <code>position: sticky</code>, so it stays pinned while the track scrolls past it.</p>
+
+  <ul class="steps-list">
+    <code>STEPS = ['design','validation','sourcing','manufacturing','quality','fulfillment','insights']</code>
+  </ul>
+
+  <ol class="seq">
+    <li><b>Map scroll → step.</b> <code>p = -rect.top / (scrollHeight - innerHeight)</code>, clamped to <code>[0, 0.9999]</code>; <code>idx = floor(p × 7)</code>.</li>
+    <li><b>Publish state.</b> The step name is written to <code>data-active</code> on the <code>.ops</code> element. Nothing else reads scroll position.</li>
+    <li><b>CSS reveals.</b> All seven screens are stacked <code>position:absolute; inset:0</code> in one shared frame. <code>.ops[data-active="x"] .ops-screen[data-screen="x"]</code> fades its screen in; the rest stay at <code>opacity:0</code>.</li>
+    <li><b>Jump &amp; lock.</b> Clicking a nav piece flips <code>data-active</code> instantly, smooth-scrolls to that bucket, and locks the scroll handler for the flight so in-between steps don't flicker.</li>
+  </ol>
+
+  <div class="note">Frame-fit invariant: every viz stage is <code>height:100%; min-height:0</code> so it conforms to the one shared, viewport-bounded frame. Never give a stage a fixed <code>min-height</code> — it will exceed the frame and <code>overflow:hidden</code> clips the bottom. Reclaim height by keeping the title and margins tight, not by growing the frame.</div>
+  <p>Below <code>820px</code> the whole mechanism collapses: the sticky scroll-jack is dropped and the screens stack in normal document flow. Any change to the stepper must be re-checked there.</p>
+
+  <h2>2 · The puzzle nav</h2>
+  <p>A 2×4 grid of pieces — the seven steps plus an eighth, the empty "your idea" slot. It is both the progress indicator and the control. Three states:</p>
+  <div class="pieces" aria-hidden="true">
+    <div class="pc active"><div class="n">01</div><div class="l">Design</div></div>
+    <div class="pc"><div class="n">02</div><div class="l">Validation</div></div>
+    <div class="pc companion"><div class="n">03</div><div class="l">Sourcing</div></div>
+    <div class="pc"><div class="n">04</div><div class="l">Manufacturing</div></div>
+    <div class="pc"><div class="n">05</div><div class="l">Quality</div></div>
+    <div class="pc"><div class="n">06</div><div class="l">Fulfillment</div></div>
+    <div class="pc"><div class="n">07</div><div class="l">Insights</div></div>
+    <div class="pc empty"><div class="n">08</div><div class="l">Your Idea</div></div>
+  </div>
+  <table>
+    <tr><th>State</th><th>Treatment</th><th>Meaning</th></tr>
+    <tr><td>Active</td><td>Fully inverted — <code>--ink-2</code> fill, <code>--ink</code> text, accent halo</td><td>The step you're on</td></tr>
+    <tr><td>Companion</td><td>Warms (no invert): accent-tinted border + inner glow</td><td>A piece that belongs to the active step (e.g. Manufacturing → Sourcing)</td></tr>
+    <tr><td>Hover</td><td>Background warms, border → accent 28%, text lifts to <code>--ink-2</code></td><td>Clickable; jumps to that step</td></tr>
+    <tr><td>Empty ("08")</td><td>Dashed accent border, italic serif label, <code>opPulse</code> 4200ms glow loop</td><td>The missing piece — your idea. The only looping animation here.</td></tr>
+  </table>
+
+  <h2>3 · Viz entrance choreography</h2>
+  <p>When a screen becomes active it doesn't just appear — its stage plays a short, staggered entrance, then idles. The pattern is consistent across all seven:</p>
+  <ol class="seq">
+    <li><b>Screen fade.</b> <code>opacity 0→1</code> over 500ms, <code>translateY(8px)→0</code> over 600ms.</li>
+    <li><b>Staged children.</b> Inner elements reveal on incremental <code>transition-delay</code>s (typically ~120–200ms apart) so the stage assembles rather than pops.</li>
+    <li><b>Bespoke beat.</b> Each viz then runs its own one-shot: the globe slow-spins, the QC grid scans cell-by-cell, the manufacturing bar fills, the insights chart draws. These start on activation and are cancelled when the step changes.</li>
+  </ol>
+  <div class="note">Entrances are one-shot and tied to <code>data-active</code>. Only the empty puzzle slot and the closing CTA glow loop forever — everything else settles and holds still. This restraint is the brand: motion is for arrival, not decoration.</div>
+
+  <h2>4 · The film reveal (Act I)</h2>
+  <p>Before the product, the cinematic open. A <code>.stage.activated</code> class (set after the cold-open beats) cross-fades the whole scene in on long, staggered delays:</p>
+  <ol class="seq">
+    <li><b>Bloom + spark</b> fade/scale in over ~1500–1800ms; the <b>vignette</b> lifts to <code>opacity:0</code> at the same time.</li>
+    <li><b>Wordmark</b> eases in at +1100–1200ms; the <b>labyrinth mark</b> follows, its three strokes drawing via <code>stroke-dashoffset</code> (staggered 1350/1650/1950ms), the centre dot at +3000ms.</li>
+    <li>Nothing bounces. The scene breathes for 5–12s and never springs.</li>
+  </ol>
+
+  <h2>Reduced motion</h2>
+  <p>Every pattern above must honour it. <code>@media (prefers-reduced-motion: reduce)</code> kills the stage/bloom/spark/typewriter transitions and ambient drifts. New motion must add itself to that block — the stepper still works (it's scroll state, not animation), it just stops being animated.</p>
+
+  <footer>Ariadne Labs — design system · interaction &amp; animation</footer>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Logo — Ariadne Design System</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="ds.css">
+<style>
+  .glow { color:#fff5e1; filter: drop-shadow(0 0 10px color-mix(in srgb, var(--spark) 45%, transparent)) drop-shadow(0 0 28px color-mix(in srgb, var(--accent) 25%, transparent)); }
+  .stagebox { border:1px solid var(--rule); border-radius:var(--r-card-lg); background:var(--ink); padding:48px; display:flex; align-items:center; gap:48px; flex-wrap:wrap; margin-top:20px; }
+  .lockup { display:flex; align-items:center; gap:12px; }
+  .lockup .wm { font-family:var(--serif); font-style:italic; font-weight:500; font-size:26px; color:#fff7e6; }
+  .sizes { display:flex; align-items:flex-end; gap:34px; flex-wrap:wrap; margin-top:20px; }
+  .sizes figure { text-align:center; }
+  .sizes figcaption { font-family:var(--sans); font-size:11px; color:var(--ink-2-low); margin-top:10px; letter-spacing:0.06em; }
+  .clear { position:relative; display:inline-block; padding:30px; border:1px dashed var(--rule); border-radius:8px; margin-top:18px; }
+  .dont { display:grid; gap:14px; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); margin-top:18px; }
+  .dont div { border:1px solid var(--rule); border-radius:var(--r-card); padding:16px; font-size:13px; color:var(--ink-2-mid); }
+  .dont b { color:#e98a9c; font-family:var(--sans); font-weight:600; display:block; margin-bottom:4px; }
+</style>
+</head>
+<body>
+  <nav class="ds-nav">
+    <a class="ds-home" href="index.html">Ariadne</a>
+    <a href="logo.html" aria-current>Logo</a>
+    <a href="colours.html">Colours</a>
+    <a href="typography.html">Typography</a>
+    <a href="spacing.html">Spacing &amp; layout</a>
+    <a href="motion.html">Motion</a>
+    <a href="interaction.html">Interaction</a>
+  </nav>
+
+  <h1>Logo</h1>
+  <p class="lede">A labyrinth glyph — concentric rings with offset gaps, the thread winding into the maze.</p>
+
+  <h2>The lockup</h2>
+  <div class="stagebox">
+    <div class="lockup" aria-label="Ariadne">
+      <svg class="glow" width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M13.2 3.1 a9 9 0 1 1 -2.4 0" />
+        <path d="M11 20.4 a6 6 0 1 1 2 0" />
+        <path d="M13 6.6 a3 3 0 1 1 -2 0" />
+        <circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none" />
+      </svg>
+      <span class="wm">Ariadne</span>
+    </div>
+    <p style="margin:0;max-width:34ch">Mark + wordmark, vertically centred, <code>gap: 12px</code>. The mark box is <code>30px</code> in product use. Wordmark is EB&nbsp;Garamond italic 500.</p>
+  </div>
+
+  <h2>Mark only</h2>
+  <div class="sizes">
+    <figure><svg class="glow" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><path d="M13.2 3.1 a9 9 0 1 1 -2.4 0"/><path d="M11 20.4 a6 6 0 1 1 2 0"/><path d="M13 6.6 a3 3 0 1 1 -2 0"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/></svg><figcaption>64 px</figcaption></figure>
+    <figure><svg class="glow" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><path d="M13.2 3.1 a9 9 0 1 1 -2.4 0"/><path d="M11 20.4 a6 6 0 1 1 2 0"/><path d="M13 6.6 a3 3 0 1 1 -2 0"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/></svg><figcaption>30 px · product</figcaption></figure>
+    <figure><svg class="glow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><path d="M13.2 3.1 a9 9 0 1 1 -2.4 0"/><path d="M11 20.4 a6 6 0 1 1 2 0"/><path d="M13 6.6 a3 3 0 1 1 -2 0"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/></svg><figcaption>20 px · min</figcaption></figure>
+  </div>
+  <p>Drawn at a 24×24 viewBox: three concentric arcs (<code>r = 9, 6, 3</code>) each with an offset gap, plus a 1.1&nbsp;r centre dot. Stroke is <code>currentColor</code> at <code>1.35</code>, round caps and joins, so it scales cleanly and recolours with text.</p>
+
+  <h2>Clear space</h2>
+  <div class="clear">
+    <svg class="glow" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"><path d="M13.2 3.1 a9 9 0 1 1 -2.4 0"/><path d="M11 20.4 a6 6 0 1 1 2 0"/><path d="M13 6.6 a3 3 0 1 1 -2 0"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/></svg>
+  </div>
+  <p>Keep at least one mark-height of empty space on every side (the dashed box). In the product it sits at <code>top: clamp(24px,3.4vh,42px)</code> / <code>left: clamp(28px,3.8vw,50px)</code>.</p>
+
+  <h2>Don't</h2>
+  <div class="dont">
+    <div><b>Don't recolour the mark</b>It's paper-white <code>#fff5e1</code> with a spark/accent glow. The glow does the colour work.</div>
+    <div><b>Don't place on light</b>This is a luminous mark for dark canvases only — it disappears on white.</div>
+    <div><b>Don't set the wordmark upright</b>The wordmark is always italic. Roman Garamond is not the brand.</div>
+    <div><b>Don't rebuild the spacing</b>Use the lockup as one unit; never re-kern mark-to-word.</div>
+  </div>
+
+  <footer>Ariadne Labs — design system · logo</footer>
+</body>
+</html>

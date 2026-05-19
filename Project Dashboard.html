@@ -1,0 +1,2297 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Lamp no. 04 — Ariadne</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+/* ──────────────────────────────────────────────────────────
+   Ariadne — Project Dashboard
+   The working surface that opens after "Open project".
+   Ember palette, working brightness (cinema dialled down),
+   no italics anywhere, sentence case throughout.
+   ────────────────────────────────────────────────────────── */
+:root {
+  --serif: "EB Garamond", "Cormorant Garamond", Georgia, serif;
+  --sans:  "Inter", system-ui, -apple-system, sans-serif;
+  --mono:  "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --ease:  cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Vellum palette — parchment, espresso, burnt sienna */
+  --ink:        #15110b;
+  --warm-bot:   #c89668;
+  --warm-mid:   #8a4a30;
+  --warm-top:   #2a1c14;
+  --spark:      #efd9ad;
+  --accent:     #b8784a;
+  --accent-soft: rgba(184,120,74,0.55);
+
+  /* Text on night */
+  --fg-1: rgba(244,237,224,0.96);
+  --fg-2: rgba(244,237,224,0.78);
+  --fg-3: rgba(244,237,224,0.55);
+  --fg-4: rgba(244,237,224,0.30);
+  --fg-5: rgba(244,237,224,0.14);
+
+  --rule:       rgba(244,237,224,0.08);
+  --rule-soft:  rgba(244,237,224,0.04);
+  --rule-hard:  rgba(244,237,224,0.14);
+  --panel:      rgba(244,237,224,0.025);
+  --panel-hi:   rgba(244,237,224,0.055);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; font-style: normal !important; }
+html, body {
+  background: var(--ink);
+  color: var(--fg-1);
+  font-family: var(--serif);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  min-height: 100vh;
+  letter-spacing: 0;
+}
+::selection { background: var(--accent); color: #fdf5e3; }
+button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+input, textarea { font: inherit; color: inherit; }
+a { color: inherit; text-decoration: none; }
+
+/* Ambient bloom — very dim, working surface, not stage */
+.ground {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+}
+.ground::before {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 90% 60% at 18% 0%,
+      color-mix(in srgb, var(--warm-mid) 22%, transparent) 0%, transparent 60%),
+    radial-gradient(ellipse 100% 70% at 100% 120%,
+      color-mix(in srgb, var(--warm-bot) 14%, transparent) 0%, transparent 65%),
+    radial-gradient(ellipse 70% 50% at 50% 50%,
+      color-mix(in srgb, var(--warm-top) 30%, transparent) 0%, transparent 70%);
+  mix-blend-mode: screen;
+  filter: brightness(0.32);
+}
+.ground::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 110% 80% at 50% 50%,
+    transparent 30%, rgba(0,0,0,0.55) 100%);
+}
+
+/* ── Top bar ───────────────────────────────────────────── */
+.bar {
+  position: sticky; top: 0; z-index: 20;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 24px;
+  padding: 18px clamp(24px, 3.6vw, 44px);
+  background: linear-gradient(180deg,
+    rgba(10,9,7,0.92) 0%, rgba(10,9,7,0.72) 60%, rgba(10,9,7,0) 100%);
+  backdrop-filter: blur(10px) saturate(1.1);
+  -webkit-backdrop-filter: blur(10px) saturate(1.1);
+}
+.bar-l { display: flex; align-items: center; gap: 14px; }
+.bar-c { display: flex; align-items: center; justify-content: center; gap: 14px; min-width: 0; }
+.bar-r { display: flex; align-items: center; justify-content: flex-end; gap: 18px; }
+
+.brand-mark {
+  width: 28px; height: 28px; color: #f4ead2; flex: 0 0 28px;
+  filter:
+    drop-shadow(0 0 6px color-mix(in srgb, var(--spark) 22%, transparent));
+}
+.brand-name {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 21px;
+  color: #f4ead2;
+  letter-spacing: 0;
+}
+.bar-sep { width: 1px; height: 22px; background: var(--rule-hard); }
+.bar-crumb {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--sans);
+  font-size: 12.5px;
+  color: var(--fg-3);
+  letter-spacing: 0;
+}
+.bar-crumb b { color: var(--fg-2); font-weight: 500; }
+.bar-ref {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--fg-3);
+  padding: 5px 9px;
+  border: 1px solid var(--rule-hard);
+  border-radius: 5px;
+}
+
+/* Mode toggle in the bar */
+.mode-pill {
+  display: inline-flex;
+  background: rgba(244,237,224,0.04);
+  border: 1px solid var(--rule-hard);
+  border-radius: 999px;
+  padding: 4px;
+  gap: 2px;
+}
+.mode-pill button {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--fg-3);
+  padding: 7px 14px;
+  border-radius: 999px;
+  letter-spacing: 0;
+  transition: color 200ms var(--ease), background 200ms var(--ease);
+  display: inline-flex; align-items: center; gap: 7px;
+}
+.mode-pill button:hover { color: var(--fg-1); }
+.mode-pill button.on {
+  color: #fdf5e3;
+  background: var(--accent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 60%, transparent);
+}
+.mode-pill .dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: currentColor; opacity: 0.5;
+}
+.mode-pill button.on .dot { opacity: 1; }
+
+.bar-avatar {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: #2a1f15;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--sans); font-size: 11.5px; font-weight: 600;
+  color: var(--spark);
+  border: 1px solid var(--rule-hard);
+  letter-spacing: 0;
+}
+
+/* ── Page shell ────────────────────────────────────────── */
+.page {
+  position: relative; z-index: 1;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: clamp(28px, 4vh, 56px) clamp(24px, 3.6vw, 44px) 120px;
+}
+
+/* Eyebrow — sentence case, sans, no caps, no italic */
+.eye {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--fg-3);
+  letter-spacing: 0;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.eye .dot {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--accent);
+}
+
+/* ── Slim status row (replaces the hero) ──────────────── */
+.status-row {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 28px; flex-wrap: wrap;
+  padding-bottom: clamp(20px, 2.6vh, 28px);
+  border-bottom: 1px solid var(--rule);
+}
+.status-row .status-l {
+  display: flex; flex-direction: column; gap: 6px;
+}
+.status-row .status-l .project {
+  font-family: var(--serif);
+  font-size: clamp(26px, 2.8vw, 34px);
+  color: var(--fg-1);
+  letter-spacing: -0.012em;
+  line-height: 1.1;
+}
+.status-row .status-r {
+  display: inline-flex; align-items: baseline; gap: 28px;
+}
+.status-row .mini {
+  display: inline-flex; flex-direction: column; gap: 2px;
+}
+.status-row .mini .k {
+  font-family: var(--sans); font-size: 11px; color: var(--fg-3);
+  letter-spacing: 0;
+}
+.status-row .mini .v {
+  font-family: var(--serif); font-size: 19px; color: var(--fg-1);
+  font-variant-numeric: tabular-nums;
+}
+.status-row .mini .v small {
+  font-family: var(--sans); font-size: 12px; color: var(--fg-3);
+  font-weight: 500; margin-left: 3px;
+}
+
+/* ── Mode-driven visibility ────────────────────────────
+   Concierge: dashboard is quiet — decisions hidden, journal trimmed.
+   Atelier:   everything visible.
+   ──────────────────────────────────────────────────────── */
+body[data-mode="concierge"] .atelier-only { display: none !important; }
+body[data-mode="atelier"]   .concierge-only { display: none !important; }
+
+/* Quiet state — the "nothing needs you" panel for Concierge mode */
+.quiet {
+  margin-top: clamp(40px, 5vh, 56px);
+  padding: clamp(36px, 5vh, 56px) clamp(28px, 4vw, 48px);
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 20%,
+      color-mix(in srgb, var(--warm-mid) 8%, transparent) 0%, transparent 70%),
+    var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+}
+.quiet h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(28px, 3.2vw, 38px);
+  line-height: 1.1;
+  color: var(--fg-1);
+  letter-spacing: -0.012em;
+  text-wrap: balance;
+  max-width: 22ch;
+  margin-top: 14px;
+}
+.quiet h2 b {
+  font-weight: 500;
+  color: var(--spark);
+}
+.quiet p {
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--fg-2);
+  margin-top: 14px;
+  max-width: 60ch;
+  letter-spacing: 0;
+}
+.quiet .quiet-last {
+  margin-top: 24px;
+  padding-top: 22px;
+  border-top: 1px solid var(--rule);
+  font-family: var(--sans); font-size: 12.5px;
+  color: var(--fg-3); letter-spacing: 0;
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 18px; flex-wrap: wrap;
+}
+.quiet .quiet-last .what {
+  display: inline-flex; align-items: center; gap: 10px;
+}
+.quiet .quiet-last .what .d {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--accent);
+}
+.quiet .quiet-last .what b { color: var(--fg-1); font-weight: 500; }
+.quiet-step-in {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  color: var(--fg-3);
+  padding: 7px 12px;
+  border: 1px solid var(--rule-hard);
+  border-radius: 7px;
+  transition: all 200ms var(--ease);
+  letter-spacing: 0;
+}
+.quiet-step-in:hover {
+  color: var(--spark);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+}
+
+/* ── Behind-the-scenes timeline (concierge transparency) ── */
+.behind {
+  margin-top: clamp(28px, 4vh, 40px);
+  padding: clamp(28px, 4vh, 40px) clamp(24px, 3.5vw, 40px);
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 16px;
+  display: none;
+}
+.behind.open { display: block; }
+.behind-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 18px; flex-wrap: wrap;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 18px;
+}
+.behind-head .ttl {
+  display: flex; flex-direction: column; gap: 10px;
+}
+.behind-head h2 {
+  font-family: var(--serif); font-weight: 400;
+  font-size: clamp(22px, 2.3vw, 28px);
+  letter-spacing: -0.012em;
+  color: var(--fg-1);
+  line-height: 1.15;
+}
+.behind-head .key {
+  display: inline-flex; align-items: center; gap: 16px;
+  font-family: var(--sans); font-size: 11.5px;
+  color: var(--fg-3); letter-spacing: 0;
+  flex-wrap: wrap;
+}
+.behind-head .key span {
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.behind-head .key .sw {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--fg-4);
+}
+.behind-head .key .sw.done {
+  background: color-mix(in srgb, var(--accent) 55%, var(--fg-3));
+}
+.behind-head .key .sw.now {
+  background: var(--accent);
+}
+.behind-head .key .sw.next {
+  background: transparent;
+  border: 1px dashed var(--fg-4);
+}
+.behind-close {
+  font-family: var(--sans); font-size: 12.5px;
+  color: var(--fg-3);
+  padding: 7px 12px; border: 1px solid var(--rule-hard);
+  border-radius: 7px;
+  transition: all 200ms var(--ease);
+  letter-spacing: 0;
+}
+.behind-close:hover { color: var(--fg-1); }
+
+.timeline {
+  list-style: none;
+  position: relative;
+  display: flex; flex-direction: column;
+}
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 96px; top: 12px; bottom: 12px;
+  width: 1px;
+  background: var(--rule);
+}
+.tl {
+  position: relative;
+  display: grid;
+  grid-template-columns: 84px 28px 1fr;
+  gap: 14px;
+  padding: 16px 0;
+  align-items: start;
+}
+.tl + .tl { border-top: 1px solid var(--rule-soft); }
+.tl .ts {
+  font-family: var(--mono); font-size: 11px;
+  color: var(--fg-3);
+  padding-top: 4px;
+  letter-spacing: 0;
+  text-align: right;
+}
+.tl .pip {
+  position: relative;
+  z-index: 1;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  margin-top: 4px;
+  margin-left: 8px;
+  background: var(--fg-4);
+  border: 3px solid var(--ink);
+  box-sizing: content-box;
+}
+.tl.done .pip {
+  background: color-mix(in srgb, var(--accent) 55%, var(--fg-3));
+}
+.tl.now .pip {
+  background: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent);
+  animation: nodePulse 2800ms var(--ease) infinite;
+}
+.tl.next .pip {
+  background: transparent;
+  border-color: var(--fg-4);
+  border-style: dashed;
+  border-width: 1px;
+  width: 14px; height: 14px;
+  margin-top: 3px; margin-left: 7px;
+  box-sizing: border-box;
+}
+.tl .body { min-width: 0; }
+.tl .body header {
+  display: inline-flex; align-items: center; gap: 10px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+.tl .badge {
+  font-family: var(--sans); font-size: 10.5px; font-weight: 500;
+  letter-spacing: 0;
+  padding: 3px 8px;
+  border-radius: 4px;
+  color: var(--fg-3);
+  background: rgba(244,237,224,0.05);
+  border: 1px solid var(--rule-hard);
+}
+.tl.done .badge {
+  color: color-mix(in srgb, var(--accent) 75%, var(--fg-1));
+  border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+.tl.now .badge {
+  color: #1c1208;
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.tl.next .badge {
+  border-style: dashed;
+}
+.tl .body h3 {
+  font-family: var(--serif); font-weight: 400;
+  font-size: 20px; line-height: 1.2;
+  color: var(--fg-1);
+  letter-spacing: -0.005em;
+}
+.tl .body .why {
+  margin-top: 6px;
+  font-family: var(--sans); font-weight: 400;
+  font-size: 13.5px; line-height: 1.6;
+  color: var(--fg-2);
+  letter-spacing: 0;
+  max-width: 62ch;
+}
+.tl .body .why b { color: var(--fg-1); font-weight: 500; }
+.tl details {
+  margin-top: 12px;
+  font-family: var(--sans); font-size: 12.5px;
+  color: var(--fg-3);
+  letter-spacing: 0;
+}
+.tl details summary {
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+  color: var(--fg-3);
+  transition: color 200ms var(--ease);
+  list-style: none;
+}
+.tl details summary::-webkit-details-marker { display: none; }
+.tl details summary:hover { color: var(--fg-1); }
+.tl details summary::before {
+  content: "+";
+  font-family: var(--mono); font-size: 14px;
+  width: 12px; text-align: center;
+  color: color-mix(in srgb, var(--accent) 70%, transparent);
+  display: inline-block;
+}
+.tl details[open] summary::before { content: "–"; }
+.tl .alts {
+  margin-top: 12px;
+  display: flex; flex-direction: column; gap: 10px;
+  padding-left: 18px;
+  border-left: 1px solid var(--rule-soft);
+}
+.tl .alts .alt {
+  font-family: var(--sans); font-size: 12.5px;
+  color: var(--fg-2); line-height: 1.5;
+  letter-spacing: 0;
+}
+.tl .alts .alt .lbl {
+  color: var(--fg-3); margin-right: 6px;
+}
+.tl .alts .alt b { color: var(--fg-1); font-weight: 500; }
+
+.behind-foot {
+  margin-top: 22px;
+  padding-top: 22px;
+  border-top: 1px solid var(--rule);
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 14px; flex-wrap: wrap;
+}
+.behind-foot .note {
+  font-family: var(--sans); font-size: 12.5px;
+  color: var(--fg-3); letter-spacing: 0; max-width: 56ch;
+  line-height: 1.55;
+}
+.behind-foot .take {
+  font-family: var(--sans); font-size: 13px; font-weight: 500;
+  color: var(--spark);
+  padding: 10px 16px;
+  border: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  transition: all 200ms var(--ease);
+  letter-spacing: 0;
+}
+.behind-foot .take:hover {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  border-color: var(--accent);
+}
+
+/* When the timeline is open in concierge mode, hide the quiet panel */
+body[data-mode="concierge"].behind-open .quiet { display: none; }
+
+@media (max-width: 720px) {
+  .tl { grid-template-columns: 56px 22px 1fr; gap: 10px; }
+  .timeline::before { left: 67px; }
+  .tl .pip { width: 10px; height: 10px; margin-left: 6px; }
+  .behind-head { flex-direction: column; align-items: flex-start; }
+}
+
+/* ── Confirm modal ───────────────────────────────────── */
+.modal {
+  position: fixed; inset: 0; z-index: 100;
+  display: none;
+  align-items: center; justify-content: center;
+  padding: 24px;
+}
+.modal.open { display: flex; }
+.modal-scrim {
+  position: absolute; inset: 0;
+  background: rgba(6,5,4,0.78);
+  backdrop-filter: blur(8px) saturate(0.85);
+  -webkit-backdrop-filter: blur(8px) saturate(0.85);
+  animation: scrimIn 280ms var(--ease);
+}
+@keyframes scrimIn { from { opacity: 0; } to { opacity: 1; } }
+.modal-sheet {
+  position: relative;
+  max-width: 540px; width: 100%;
+  background: #1c1610;
+  border: 1px solid var(--rule-hard);
+  border-radius: 12px;
+  padding: clamp(28px, 4vh, 44px) clamp(28px, 3.5vw, 44px);
+  box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+  animation: sheetIn 380ms var(--ease);
+}
+@keyframes sheetIn { from { opacity: 0; transform: translateY(12px) scale(0.98); } to { opacity: 1; transform: none; } }
+.modal-eye {
+  font-family: var(--mono); font-size: 11px; color: var(--fg-3);
+  letter-spacing: 0; margin-bottom: 14px;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+.modal-eye .d {
+  width: 5px; height: 5px; border-radius: 50%; background: var(--accent);
+}
+.modal-sheet h2 {
+  font-family: var(--serif); font-weight: 400;
+  font-size: clamp(28px, 3vw, 36px);
+  line-height: 1.1; letter-spacing: -0.012em;
+  color: var(--fg-1);
+}
+.modal-sheet h2 b {
+  font-weight: 500;
+  color: var(--spark);
+}
+.modal-sheet > p {
+  font-family: var(--sans); font-weight: 400;
+  font-size: 14.5px;
+  line-height: 1.65; color: var(--fg-2);
+  margin-top: 14px; text-wrap: pretty;
+  letter-spacing: 0;
+}
+.modal-sheet > p b { color: var(--fg-1); font-weight: 500; }
+.modal-list {
+  list-style: none; margin: 22px 0 4px;
+  display: flex; flex-direction: column; gap: 12px;
+  padding-top: 22px; border-top: 1px solid var(--rule);
+}
+.modal-list li {
+  position: relative;
+  padding-left: 28px;
+  font-family: var(--sans); font-weight: 400;
+  font-size: 14px; color: var(--fg-2);
+  line-height: 1.55;
+  letter-spacing: 0;
+}
+.modal-list li::before {
+  content: "—";
+  position: absolute;
+  left: 0; top: 0;
+  color: color-mix(in srgb, var(--accent) 70%, transparent);
+  font-family: var(--serif);
+}
+.modal-list li b { color: var(--fg-1); font-weight: 500; }
+.modal-foot {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 14px;
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid var(--rule);
+}
+.modal-foot .ghost {
+  font-family: var(--sans); font-size: 13.5px;
+  color: var(--fg-3);
+  padding: 11px 16px; border-radius: 8px;
+  transition: color 200ms var(--ease);
+}
+.modal-foot .ghost:hover { color: var(--fg-1); }
+.modal-foot .commit {
+  font-family: var(--sans); font-size: 13.5px; font-weight: 500;
+  color: #fdf5e3;
+  padding: 11px 22px; border-radius: 6px;
+  background: var(--accent);
+  transition: background 200ms var(--ease), transform 80ms var(--ease);
+  letter-spacing: 0;
+}
+.modal-foot .commit:hover { background: color-mix(in srgb, var(--accent) 88%, #fff); }
+.modal-foot .commit:active { transform: scale(0.98); }
+
+/* Old hero (kept stub to avoid layout reflows referencing it) */
+.hero { display: none; }
+.hero-l h1 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(40px, 5vw, 68px);
+  line-height: 1.05;
+  letter-spacing: -0.018em;
+  color: var(--fg-1);
+  margin-top: 18px;
+  text-wrap: balance;
+}
+.hero-l h1 b {
+  font-weight: 500;
+  color: var(--spark);
+  text-shadow:
+    0 0 22px color-mix(in srgb, var(--accent) 30%, transparent),
+    0 0 56px color-mix(in srgb, var(--warm-mid) 18%, transparent);
+}
+.hero-l .sub {
+  margin-top: 16px;
+  font-family: var(--serif);
+  font-size: clamp(17px, 1.3vw, 20px);
+  line-height: 1.55;
+  color: var(--fg-2);
+  max-width: 52ch;
+}
+
+/* Right: project clock + key numbers */
+.hero-r {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.metric {
+  background: var(--ink);
+  padding: 18px 18px 20px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.metric .k {
+  font-family: var(--sans);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--fg-3);
+  letter-spacing: 0;
+}
+.metric .v {
+  font-family: var(--serif);
+  font-size: 32px;
+  color: var(--fg-1);
+  line-height: 1;
+  display: inline-flex; align-items: baseline; gap: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.metric .v small {
+  font-size: 14px; color: var(--fg-3);
+  font-family: var(--sans);
+}
+.metric .n {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--fg-3);
+}
+
+/* ── Stage thread ──────────────────────────────────────── */
+.thread {
+  margin-top: clamp(40px, 5vh, 56px);
+  padding: clamp(24px, 3vh, 32px) clamp(20px, 2.6vw, 32px);
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+}
+.thread-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 22px;
+}
+.thread-head h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 22px;
+  color: var(--fg-1);
+}
+.thread-head .meta {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--fg-3);
+}
+
+.thread-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  position: relative;
+  gap: 0;
+}
+.thread-line {
+  position: absolute;
+  left: 0; right: 0; top: 14px;
+  height: 1px;
+  background: var(--rule-hard);
+  z-index: 0;
+}
+.thread-progress {
+  position: absolute;
+  left: 0; top: 14px;
+  height: 1px;
+  width: 38%;
+  background: var(--accent);
+  z-index: 1;
+}
+.stage {
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column; gap: 12px;
+  padding-right: 24px;
+}
+.stage .node {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--ink);
+  border: 1px solid var(--rule-hard);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 11px; color: var(--fg-3);
+}
+.stage .body {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.stage .lbl {
+  font-family: var(--serif);
+  font-size: 19px;
+  color: var(--fg-2);
+}
+.stage .note {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  color: var(--fg-3);
+  line-height: 1.45;
+}
+.stage.done .node {
+  background: color-mix(in srgb, var(--accent) 14%, var(--ink));
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  color: var(--spark);
+}
+.stage.done .lbl { color: var(--fg-1); }
+.stage.now .node {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fdf5e3;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent);
+  animation: nodePulse 2800ms var(--ease) infinite;
+}
+@keyframes nodePulse {
+  0%, 100% { box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 10%, transparent); }
+  50%      { box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 6%, transparent); }
+}
+.stage.now .lbl {
+  color: var(--fg-1);
+}
+.stage.now .note { color: var(--fg-2); }
+
+/* ── Main grid ─────────────────────────────────────────── */
+.grid {
+  margin-top: clamp(56px, 7vh, 84px);
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  gap: clamp(28px, 3.5vw, 48px);
+  align-items: start;
+}
+
+/* Section header pattern */
+.sec-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  margin-bottom: 22px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--rule);
+}
+.sec-head h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 28px;
+  color: var(--fg-1);
+  letter-spacing: -0.01em;
+}
+.sec-head .count {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--fg-3);
+}
+
+/* ── Decisions ─────────────────────────────────────────── */
+.decisions { display: flex; flex-direction: column; gap: 18px; }
+
+.decision {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  padding: 22px 24px 18px;
+  transition: border-color 280ms var(--ease), background 280ms var(--ease);
+}
+.decision:hover { border-color: var(--rule-hard); }
+.decision.resolved {
+  opacity: 0.55;
+  background: transparent;
+}
+.dec-head {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  gap: 18px;
+  margin-bottom: 6px;
+}
+.dec-head .eye .stage-tag {
+  color: var(--fg-2);
+}
+.dec-head .timer {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--fg-3);
+  padding: 3px 8px;
+  border: 1px solid var(--rule-hard);
+  border-radius: 5px;
+}
+.decision h3 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1.15;
+  color: var(--fg-1);
+  margin: 10px 0 8px;
+  letter-spacing: -0.005em;
+}
+.dec-context {
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--fg-2);
+  max-width: 64ch;
+  margin-bottom: 18px;
+  letter-spacing: 0;
+}
+.dec-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.opt {
+  position: relative;
+  text-align: left;
+  padding: 14px 14px 14px 38px;
+  background: rgba(244,237,224,0.025);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  display: flex; flex-direction: column; gap: 4px;
+  transition: all 220ms var(--ease);
+}
+.opt:hover {
+  background: rgba(244,237,224,0.05);
+  border-color: var(--rule-hard);
+}
+.opt::before {
+  content: "";
+  position: absolute;
+  left: 14px; top: 16px;
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  border: 1px solid var(--rule-hard);
+  background: var(--ink);
+  transition: all 220ms var(--ease);
+}
+.opt[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.opt[aria-pressed="true"]::before {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.opt .nm {
+  font-family: var(--serif);
+  font-size: 18px;
+  color: var(--fg-1);
+  letter-spacing: 0;
+}
+.opt .meta {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--fg-3);
+  letter-spacing: 0;
+}
+.opt .meta b { color: var(--fg-2); font-weight: 500; }
+
+.dec-foot {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+  gap: 14px;
+}
+.dec-defer {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--fg-3);
+  display: inline-flex; align-items: center; gap: 8px;
+  transition: color 200ms var(--ease);
+}
+.dec-defer:hover { color: var(--spark); }
+.dec-defer .ar {
+  display: inline-block;
+  width: 16px; height: 1px; background: currentColor;
+  position: relative;
+}
+.dec-defer .ar::after {
+  content: ""; position: absolute; right: 0; top: 50%;
+  width: 5px; height: 5px;
+  border-right: 1px solid currentColor;
+  border-top: 1px solid currentColor;
+  transform: translateY(-50%) rotate(45deg);
+}
+.dec-confirm {
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  color: #fdf5e3;
+  background: var(--accent);
+  padding: 9px 16px;
+  border-radius: 6px;
+  letter-spacing: 0;
+  opacity: 0.5;
+  pointer-events: none;
+  transition: opacity 220ms var(--ease), transform 80ms var(--ease), background 200ms var(--ease);
+}
+.decision.has-pick .dec-confirm { opacity: 1; pointer-events: auto; }
+.decision.has-pick .dec-confirm:hover { background: color-mix(in srgb, var(--accent) 88%, #fff); }
+.dec-confirm:active { transform: scale(0.98); }
+
+.decision.resolved h3 { color: var(--fg-2); }
+.decision.resolved .dec-options,
+.decision.resolved .dec-foot { display: none; }
+.decision.resolved .resolved-note {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--sans); font-size: 13px; color: var(--fg-3);
+  padding: 10px 0 4px;
+}
+.decision.resolved .resolved-note::before {
+  content: "✓";
+  font-family: var(--serif); font-size: 16px;
+  color: var(--accent);
+}
+.decision .resolved-note { display: none; }
+
+/* ── Activity journal ──────────────────────────────────── */
+.journal {
+  margin-top: clamp(40px, 5vh, 60px);
+}
+.journal-list {
+  list-style: none;
+  display: flex; flex-direction: column;
+  position: relative;
+  margin-left: 8px;
+}
+.journal-list::before {
+  content: "";
+  position: absolute;
+  left: 5px; top: 8px; bottom: 8px;
+  width: 1px;
+  background: var(--rule);
+}
+.j {
+  position: relative;
+  padding: 12px 0 12px 28px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: baseline;
+}
+.j::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 18px;
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  background: var(--ink);
+  border: 1px solid var(--rule-hard);
+}
+.j.active::before {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 60%, transparent);
+}
+.j .txt {
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--fg-2);
+  letter-spacing: 0;
+}
+.j .txt b { color: var(--fg-1); font-weight: 500; }
+.j .txt .who {
+  font-family: var(--sans); font-size: 12px;
+  color: var(--fg-3); display: block; margin-top: 2px;
+  letter-spacing: 0;
+}
+.j .when {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--fg-3);
+  white-space: nowrap;
+}
+
+/* ── Right column ──────────────────────────────────────── */
+.rail { display: flex; flex-direction: column; gap: 22px; }
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 14px;
+  padding: 22px 22px 20px;
+}
+.card-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 14px;
+}
+.card-head h3 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 22px;
+  color: var(--fg-1);
+}
+.card-edit {
+  font-family: var(--sans);
+  font-size: 12.5px;
+  color: var(--fg-3);
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 10px;
+  border: 1px solid var(--rule-hard);
+  border-radius: 6px;
+  transition: all 200ms var(--ease);
+}
+.card-edit:hover {
+  color: var(--spark);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  background: color-mix(in srgb, var(--accent) 6%, transparent);
+}
+.card-edit svg { width: 11px; height: 11px; }
+
+/* Product card */
+.prod-eye {
+  font-family: var(--sans); font-size: 11px; color: var(--fg-3);
+  letter-spacing: 0; margin-bottom: 6px;
+}
+.prod-title {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 26px;
+  color: var(--fg-1);
+  letter-spacing: -0.005em;
+  line-height: 1.15;
+}
+.prod-sub {
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: 13.5px;
+  color: var(--fg-2);
+  line-height: 1.55;
+  margin-top: 8px;
+  letter-spacing: 0;
+}
+
+.prod-stage {
+  margin: 18px -22px 0;
+  padding: 18px 22px 14px;
+  background: linear-gradient(180deg,
+    rgba(0,0,0,0.25) 0%,
+    rgba(0,0,0,0.05) 100%);
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  position: relative;
+  overflow: hidden;
+}
+.prod-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 60% at 50% 75%,
+    color-mix(in srgb, var(--warm-bot) 12%, transparent) 0%, transparent 70%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+.prod-stage svg {
+  display: block;
+  width: 100%;
+  height: 240px;
+  position: relative;
+  z-index: 1;
+}
+.prod-stage .file-line {
+  position: relative; z-index: 2;
+  display: flex; justify-content: space-between;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--fg-3);
+  margin-top: 6px;
+}
+
+.prod-specs {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--rule);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.spec {
+  background: var(--ink);
+  padding: 12px 14px;
+  display: flex; flex-direction: column; gap: 4px;
+}
+.spec .k {
+  font-family: var(--sans); font-size: 11px; color: var(--fg-3);
+  letter-spacing: 0;
+}
+.spec .v {
+  font-family: var(--serif); font-size: 17px; color: var(--fg-1);
+}
+
+/* Edit state of product card */
+.prod-edit-form { display: none; gap: 14px; flex-direction: column; }
+.card.editing .prod-title,
+.card.editing .prod-sub,
+.card.editing .prod-stage,
+.card.editing .prod-specs { display: none; }
+.card.editing .prod-edit-form { display: flex; }
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label {
+  font-family: var(--sans); font-size: 11px; color: var(--fg-3);
+  letter-spacing: 0;
+}
+.field input, .field textarea {
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--rule-hard);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-family: var(--serif);
+  font-size: 17px;
+  color: var(--fg-1);
+  outline: none;
+  transition: border-color 200ms var(--ease), background 200ms var(--ease);
+  width: 100%;
+  resize: vertical;
+}
+.field input:focus, .field textarea:focus {
+  border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+  background: rgba(0,0,0,0.4);
+}
+.field textarea { min-height: 70px; }
+.spec-grid-edit {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.spec-grid-edit .field input { padding: 10px 12px; font-size: 15px; }
+
+.form-foot {
+  display: flex; justify-content: flex-end; gap: 10px;
+  margin-top: 4px;
+}
+.btn-ghost {
+  font-family: var(--sans); font-size: 13px; color: var(--fg-3);
+  padding: 9px 14px; border-radius: 8px;
+  border: 1px solid transparent;
+  transition: color 200ms var(--ease);
+}
+.btn-ghost:hover { color: var(--fg-1); }
+.btn-primary {
+  font-family: var(--sans); font-size: 13px; font-weight: 500;
+  color: #fdf5e3;
+  padding: 9px 16px; border-radius: 6px;
+  background: var(--accent);
+  transition: background 200ms var(--ease);
+}
+.btn-primary:hover { background: color-mix(in srgb, var(--accent) 88%, #fff); }
+
+/* Mode card */
+.mode-card .mode-explain {
+  font-family: var(--sans);
+  font-weight: 400;
+  font-size: 13.5px;
+  color: var(--fg-2);
+  line-height: 1.6;
+  margin-top: 10px;
+  letter-spacing: 0;
+}
+.mode-card .mode-explain b { color: var(--fg-1); font-weight: 500; }
+.mode-switch {
+  margin-top: 16px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+}
+.mode-switch button {
+  text-align: left;
+  padding: 14px 14px 12px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  background: rgba(244,237,224,0.025);
+  display: flex; flex-direction: column; gap: 4px;
+  transition: all 220ms var(--ease);
+}
+.mode-switch button:hover {
+  background: rgba(244,237,224,0.05);
+  border-color: var(--rule-hard);
+}
+.mode-switch button .nm {
+  font-family: var(--serif); font-size: 18px; color: var(--fg-1);
+}
+.mode-switch button .desc {
+  font-family: var(--sans); font-size: 11.5px; color: var(--fg-3);
+  letter-spacing: 0; line-height: 1.4;
+}
+.mode-switch button.on {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.mode-switch button.on .nm { color: var(--spark); }
+.mode-switch .indicator {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 4px;
+  font-family: var(--mono); font-size: 10.5px; color: var(--fg-3);
+  letter-spacing: 0;
+}
+.mode-switch .indicator .d {
+  width: 5px; height: 5px; border-radius: 50%;
+  background: var(--fg-4);
+}
+.mode-switch button.on .indicator { color: var(--accent); }
+.mode-switch button.on .indicator .d {
+  background: var(--accent);
+}
+
+/* Concierge card */
+.contact {
+  display: flex; align-items: center; gap: 14px;
+}
+.contact .av {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: #2a1f15;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--serif); font-size: 18px; font-weight: 500;
+  color: var(--spark);
+  border: 1px solid var(--rule-hard);
+  flex: 0 0 44px;
+}
+.contact .who {
+  display: flex; flex-direction: column; gap: 2px;
+}
+.contact .nm {
+  font-family: var(--serif); font-size: 19px; color: var(--fg-1);
+}
+.contact .role {
+  font-family: var(--sans); font-size: 12px; color: var(--fg-3);
+}
+.contact-actions {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.contact-actions button {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--fg-2);
+  padding: 10px 12px;
+  border: 1px solid var(--rule-hard);
+  border-radius: 8px;
+  transition: all 200ms var(--ease);
+}
+.contact-actions button:hover {
+  background: rgba(244,237,224,0.04);
+  color: var(--fg-1);
+}
+
+/* Quote card */
+.quote-figure {
+  font-family: var(--serif);
+  font-size: 44px;
+  color: var(--fg-1);
+  letter-spacing: -0.018em;
+  display: inline-flex; align-items: baseline; gap: 6px;
+  font-variant-numeric: tabular-nums;
+}
+.quote-figure small {
+  font-size: 16px; color: var(--fg-3); font-family: var(--sans);
+  font-weight: 500;
+}
+.quote-line {
+  margin-top: 4px;
+  font-family: var(--sans); font-weight: 400;
+  font-size: 13.5px; color: var(--fg-2);
+  line-height: 1.55;
+  letter-spacing: 0;
+}
+.quote-bar {
+  margin-top: 14px;
+  height: 4px;
+  background: var(--rule-soft);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.quote-bar i {
+  display: block; height: 100%;
+  width: 64%;
+  background: var(--accent);
+  border-radius: 4px;
+}
+.quote-meta {
+  display: flex; justify-content: space-between;
+  margin-top: 8px;
+  font-family: var(--mono); font-size: 11px; color: var(--fg-3);
+}
+
+/* Tiny toast */
+.toast {
+  position: fixed;
+  bottom: 28px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  opacity: 0;
+  background: #1c1610;
+  border: 1px solid var(--rule-hard);
+  color: var(--fg-1);
+  font-family: var(--sans); font-size: 13px;
+  padding: 12px 18px;
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  pointer-events: none;
+  transition: opacity 280ms var(--ease), transform 320ms var(--ease);
+  z-index: 30;
+  letter-spacing: 0;
+  display: inline-flex; align-items: center; gap: 10px;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.toast .tk { color: var(--accent); }
+
+/* Reveal */
+.reveal { opacity: 0; transform: translateY(8px); animation: rv 700ms var(--ease) forwards; }
+.reveal.d2 { animation-delay: 120ms; }
+.reveal.d3 { animation-delay: 240ms; }
+.reveal.d4 { animation-delay: 360ms; }
+.reveal.d5 { animation-delay: 480ms; }
+@keyframes rv { to { opacity: 1; transform: none; } }
+
+@media (max-width: 980px) {
+  .status-row { gap: 16px; }
+  .grid { grid-template-columns: 1fr; }
+  .bar { grid-template-columns: auto 1fr auto; }
+  .bar-c { display: none; }
+  .thread-strip { grid-template-columns: 1fr; gap: 16px; }
+  .thread-line, .thread-progress { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+</style>
+</head>
+<body data-screen-label="dashboard" data-mode="concierge">
+
+<div class="ground" aria-hidden="true"></div>
+
+<!-- ── Top bar ─────────────────────────────────────────── -->
+<header class="bar">
+  <div class="bar-l">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M13.2 3.1 a9 9 0 1 1 -2.4 0" />
+        <path d="M11 20.4 a6 6 0 1 1 2 0" />
+        <path d="M13 6.6 a3 3 0 1 1 -2 0" />
+        <circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none" />
+      </svg>
+    </span>
+    <span class="brand-name">Ariadne</span>
+    <span class="bar-sep" aria-hidden="true"></span>
+    <span class="bar-crumb"><span>Projects</span> <span style="color:var(--fg-5);">/</span> <b id="crumbTitle">Lamp no. 04</b></span>
+  </div>
+
+  <div class="bar-c">
+    <span class="bar-ref">A&#8209;1827</span>
+    <div class="mode-pill" role="radiogroup" aria-label="How you're running this project" id="modePillBar">
+      <button type="button" data-mode="concierge" class="on" aria-pressed="true">
+        <span class="dot" aria-hidden="true"></span><span>Concierge</span>
+      </button>
+      <button type="button" data-mode="atelier" aria-pressed="false">
+        <span class="dot" aria-hidden="true"></span><span>Atelier</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="bar-r">
+    <button class="card-edit" type="button" aria-label="Notifications" style="padding:6px 9px;">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;">
+        <path d="M3.5 6.5a4.5 4.5 0 0 1 9 0v3l1 2h-11l1-2z" />
+        <path d="M6.5 13.5a1.5 1.5 0 0 0 3 0" />
+      </svg>
+      <span style="font-size:11.5px;">2</span>
+    </button>
+    <span class="bar-avatar" title="You">YO</span>
+  </div>
+</header>
+
+<!-- ── Page ────────────────────────────────────────────── -->
+<main class="page">
+
+  <!-- Slim status row -->
+  <section class="status-row reveal" aria-label="Project status">
+    <div class="status-l">
+      <span class="eye"><span class="dot" aria-hidden="true"></span><span>Sourcing &middot; day 4 of an estimated 28</span></span>
+      <div class="project">Hanging lamp, no. 04</div>
+    </div>
+    <div class="status-r">
+      <div class="mini">
+        <span class="k">Estimated ship</span>
+        <span class="v">09<small>Jun</small></span>
+      </div>
+      <div class="mini">
+        <span class="k">Quote</span>
+        <span class="v">$840</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stage thread -->
+  <section class="thread reveal d2" aria-label="Project stages">
+    <div class="thread-head">
+      <h2>Your path through production</h2>
+      <span class="meta">Personal commission &middot; three stages</span>
+    </div>
+    <div class="thread-strip">
+      <span class="thread-line" aria-hidden="true"></span>
+      <span class="thread-progress" aria-hidden="true"></span>
+
+      <div class="stage now">
+        <span class="node">01</span>
+        <div class="body">
+          <span class="lbl">Sourcing</span>
+          <span class="note">Workshops shortlisted &middot; sample maker contacted</span>
+        </div>
+      </div>
+      <div class="stage">
+        <span class="node">02</span>
+        <div class="body">
+          <span class="lbl">Quality</span>
+          <span class="note">Sample review &middot; tolerances &amp; finish</span>
+        </div>
+      </div>
+      <div class="stage">
+        <span class="node">03</span>
+        <div class="body">
+          <span class="lbl">Fulfillment</span>
+          <span class="note">Packed, insured, and to your door</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main two-column grid -->
+  <div class="grid">
+
+    <!-- ── Left ─────────────────────────────────────────── -->
+    <div>
+
+      <!-- Concierge: quiet "nothing for you" panel -->
+      <section class="quiet concierge-only reveal d3" aria-label="Nothing needs you right now">
+        <span class="eye"><span class="dot" aria-hidden="true"></span><span>Concierge mode &middot; everything is being handled</span></span>
+        <h2>Nothing needs you. <b>We&rsquo;ll knock when it matters.</b></h2>
+        <p>Sourcing is underway. The dashboard will stay quiet — we&rsquo;ll only reach out for a sample to approve, or a call only you can make. Concierge isn&rsquo;t a black box, though — peek at every decision we&rsquo;re making for you below.</p>
+
+        <div class="quiet-last">
+          <span class="what"><span class="d" aria-hidden="true"></span><span>Last move: <b>three ceramicists shortlisted</b> &middot; today, 09:14</span></span>
+          <button class="quiet-step-in" type="button" id="quietStepIn">See what we&rsquo;re doing &rarr;</button>
+        </div>
+      </section>
+
+      <!-- Concierge: transparent timeline of decisions in flight -->
+      <section class="behind concierge-only" id="behind" aria-label="What we’re doing on your behalf">
+        <header class="behind-head">
+          <div class="ttl">
+            <span class="eye"><span class="dot" aria-hidden="true"></span><span>Behind the scenes</span></span>
+            <h2>Every call we&rsquo;re making for you.</h2>
+            <div class="key" aria-hidden="true">
+              <span><span class="sw done"></span>decided for you</span>
+              <span><span class="sw now"></span>weighing now</span>
+              <span><span class="sw next"></span>up next</span>
+            </div>
+          </div>
+          <button class="behind-close" type="button" id="behindClose">Hide</button>
+        </header>
+
+        <ol class="timeline">
+
+          <li class="tl next">
+            <time class="ts">~ 28 May</time>
+            <span class="pip" aria-hidden="true"></span>
+            <div class="body">
+              <header>
+                <span class="badge">Up next</span>
+              </header>
+              <h3>Sample review &mdash; shade and canopy together.</h3>
+              <p class="why">Once the sample lands from the workshop we&rsquo;ll photograph it under three light conditions and write up tolerances. <b>You&rsquo;ll see this one</b> &mdash; sample approval is always yours.</p>
+            </div>
+          </li>
+
+          <li class="tl now">
+            <time class="ts">today</time>
+            <span class="pip" aria-hidden="true"></span>
+            <div class="body">
+              <header>
+                <span class="badge">Weighing</span>
+              </header>
+              <h3>Which ceramicist for the shade.</h3>
+              <p class="why">Three workshops match the curve and finish. Lin&rsquo;s glaze is closest to the reference; Huang turns the thinnest walls but adds three days; Bardon has a warmer body but a longer wait. Leaning <b>Lin studio</b> &mdash; final call by Friday.</p>
+              <details>
+                <summary>3 options being weighed</summary>
+                <div class="alts">
+                  <div class="alt"><span class="lbl">Leaning:</span><b>Lin studio</b> &middot; Jingdezhen &middot; 9 days &middot; deep matte glaze, closest to brief</div>
+                  <div class="alt"><span class="lbl">Considering:</span><b>Huang &amp; Sons</b> &middot; 12 days &middot; thinnest walls but adds 3 days</div>
+                  <div class="alt"><span class="lbl">Considering:</span><b>Bardon ceramics</b> &middot; 14 days &middot; warmer body, longer wait</div>
+                </div>
+              </details>
+            </div>
+          </li>
+
+          <li class="tl done">
+            <time class="ts">today</time>
+            <span class="pip" aria-hidden="true"></span>
+            <div class="body">
+              <header>
+                <span class="badge">Decided for you</span>
+              </header>
+              <h3>Beech canopy &mdash; hard oil finish.</h3>
+              <p class="why">Standard for turned beech on a hanging piece. Deepens the grain and ages with use; wax stays paler but reads flatter and needs re-coating every couple of years. <b>Hard oil</b> is what we&rsquo;d pick nine times in ten.</p>
+              <details>
+                <summary>2 options considered</summary>
+                <div class="alts">
+                  <div class="alt"><span class="lbl">Picked:</span><b>Hard oil</b> &middot; deepens with age, matches the piece</div>
+                  <div class="alt"><span class="lbl">Skipped:</span>Soft wax &middot; paler, more uniform, needs upkeep</div>
+                </div>
+              </details>
+            </div>
+          </li>
+
+          <li class="tl done">
+            <time class="ts">14 May</time>
+            <span class="pip" aria-hidden="true"></span>
+            <div class="body">
+              <header>
+                <span class="badge">Decided for you</span>
+              </header>
+              <h3>Quote held at $840.</h3>
+              <p class="why">Workshop bids came in 6–9% apart. Holding the figure while the ceramicist call is still in the air; we&rsquo;ll lock it the moment Lin (or whoever) is confirmed.</p>
+            </div>
+          </li>
+
+          <li class="tl done">
+            <time class="ts">13 May</time>
+            <span class="pip" aria-hidden="true"></span>
+            <div class="body">
+              <header>
+                <span class="badge">Decided for you</span>
+              </header>
+              <h3>Cord length &mdash; 1.8m.</h3>
+              <p class="why">You answered this one in the brief. Logged and shared with the ceramicist for the sketch.</p>
+            </div>
+          </li>
+
+          <li class="tl done">
+            <time class="ts">12 May</time>
+            <span class="pip" aria-hidden="true"></span>
+            <div class="body">
+              <header>
+                <span class="badge">Decided for you</span>
+              </header>
+              <h3>Path opened &mdash; three stages.</h3>
+              <p class="why">Personal commission. Sourcing &middot; Quality &middot; Fulfillment. Estimated 28 days door-to-door.</p>
+            </div>
+          </li>
+
+        </ol>
+
+        <footer class="behind-foot">
+          <p class="note">This is everything we&rsquo;re doing. We&rsquo;ll keep updating this list. You can step in any time.</p>
+          <button class="take" type="button" id="behindTake">Take the wheel &rarr;</button>
+        </footer>
+      </section>
+
+      <!-- Atelier: full decisions -->
+      <section class="atelier-only reveal d3">
+        <div class="sec-head">
+          <h2>Decisions awaiting you</h2>
+          <span class="count" id="decCount">2 open &middot; 1 resolved</span>
+        </div>
+
+        <div class="decisions">
+
+          <!-- Decision 01 -->
+          <article class="decision" data-id="d-01">
+            <div class="dec-head">
+              <span class="eye"><span class="dot" aria-hidden="true"></span><span class="stage-tag">Sourcing</span> &middot; <span>decision 01 of 03</span></span>
+              <span class="timer">3 days to decide</span>
+            </div>
+            <h3>Which ceramicist for the shade?</h3>
+            <p class="dec-context">Three workshops. The differences are real but small &mdash; the curve of the shade, the depth of the glaze, the wait. Pick what matters most to you, or leave it with us.</p>
+
+            <div class="dec-options" role="radiogroup" aria-label="Ceramicist options">
+              <button class="opt" type="button" data-val="lin" aria-pressed="false">
+                <span class="nm">Lin studio</span>
+                <span class="meta"><b>Jingdezhen</b> &middot; 9 days &middot; deep matte glaze</span>
+              </button>
+              <button class="opt" type="button" data-val="huang" aria-pressed="false">
+                <span class="nm">Huang &amp; Sons</span>
+                <span class="meta"><b>Jingdezhen</b> &middot; 12 days &middot; thinnest walls</span>
+              </button>
+              <button class="opt" type="button" data-val="bardon" aria-pressed="false">
+                <span class="nm">Bardon ceramics</span>
+                <span class="meta"><b>Stoke-on-Trent</b> &middot; 14 days &middot; warmer body</span>
+              </button>
+            </div>
+
+            <div class="dec-foot">
+              <button class="dec-defer" type="button" data-defer="d-01">
+                <span>Leave this with us</span>
+                <span class="ar" aria-hidden="true"></span>
+              </button>
+              <button class="dec-confirm" type="button">Confirm pick</button>
+            </div>
+
+            <div class="resolved-note" aria-live="polite">Resolved &middot; <span class="rn-text">&nbsp;</span></div>
+          </article>
+
+          <!-- Decision 02 -->
+          <article class="decision" data-id="d-02">
+            <div class="dec-head">
+              <span class="eye"><span class="dot" aria-hidden="true"></span><span class="stage-tag">Sourcing</span> &middot; <span>decision 02 of 03</span></span>
+              <span class="timer">5 days to decide</span>
+            </div>
+            <h3>Beech canopy &mdash; oil or wax?</h3>
+            <p class="dec-context">Both protect the turned beech the same. Oil deepens the grain and ages with use; wax stays paler and reads more matte. We&rsquo;d default to oil &mdash; it ages the way a turned piece should &mdash; but the call is yours.</p>
+
+            <div class="dec-options" role="radiogroup" aria-label="Finish options">
+              <button class="opt" type="button" data-val="oil" aria-pressed="false">
+                <span class="nm">Hard oil</span>
+                <span class="meta"><b>Recommended</b> &middot; deepens with age</span>
+              </button>
+              <button class="opt" type="button" data-val="wax" aria-pressed="false">
+                <span class="nm">Soft wax</span>
+                <span class="meta"><b>Paler</b> &middot; matte, more uniform</span>
+              </button>
+            </div>
+
+            <div class="dec-foot">
+              <button class="dec-defer" type="button" data-defer="d-02">
+                <span>Leave this with us</span>
+                <span class="ar" aria-hidden="true"></span>
+              </button>
+              <button class="dec-confirm" type="button">Confirm pick</button>
+            </div>
+
+            <div class="resolved-note" aria-live="polite">Resolved &middot; <span class="rn-text">&nbsp;</span></div>
+          </article>
+
+          <!-- Resolved already -->
+          <article class="decision resolved" data-id="d-00">
+            <div class="dec-head">
+              <span class="eye"><span class="dot" aria-hidden="true" style="background:var(--fg-3);box-shadow:none;"></span><span class="stage-tag">Sourcing</span> &middot; <span>decision 00</span></span>
+              <span class="timer" style="opacity:0.6;">closed Mon</span>
+            </div>
+            <h3>Cord length &mdash; 1.8m confirmed.</h3>
+            <div class="resolved-note" style="display:flex;">Resolved &middot; 1.8m linen cord, natural.</div>
+          </article>
+
+        </div>
+      </section>
+
+      <!-- Activity journal (Atelier only — concierge gets it inside the quiet panel) -->
+      <section class="journal atelier-only reveal d4">
+        <div class="sec-head">
+          <h2>Journal</h2>
+          <span class="count">recent &middot; last 4 days</span>
+        </div>
+
+        <ol class="journal-list" aria-label="Recent activity">
+          <li class="j active">
+            <div class="txt">
+              <b>Three ceramicists</b> shortlisted for the shade and posted above.
+            </div>
+            <span class="when">today &middot; 09:14</span>
+          </li>
+          <li class="j">
+            <div class="txt">
+              Quote returned at <b>$840</b>, holding while two decisions stay open.
+            </div>
+            <span class="when">14 May &middot; 17:02</span>
+          </li>
+          <li class="j">
+            <div class="txt">
+              Cord length confirmed at <b>1.8m</b>.
+            </div>
+            <span class="when">13 May &middot; 11:28</span>
+          </li>
+          <li class="j">
+            <div class="txt">
+              Brief received. Three&#8209;stage path opened: <b>Sourcing &middot; Quality &middot; Fulfillment</b>.
+            </div>
+            <span class="when">12 May &middot; 14:08</span>
+          </li>
+        </ol>
+      </section>
+
+    </div>
+
+    <!-- ── Right rail ───────────────────────────────────── -->
+    <aside class="rail">
+
+      <!-- Mode card -->
+      <section class="card mode-card reveal d3" id="modeCard">
+        <div class="card-head">
+          <h3>How you&rsquo;re working</h3>
+        </div>
+        <p class="mode-explain" id="modeExplain">
+          <b>Concierge.</b> We run the project. The dashboard stays quiet &mdash; you only hear from us when something needs you. Expect that two or three times across the whole project.
+        </p>
+        <div class="mode-switch" role="radiogroup" aria-label="Working mode">
+          <button type="button" data-mode="concierge" class="on" aria-pressed="true">
+            <span class="nm">Concierge</span>
+            <span class="desc">We handle it &middot; you hear from us 2&ndash;3 times</span>
+            <span class="indicator"><span class="d" aria-hidden="true"></span><span>active</span></span>
+          </button>
+          <button type="button" data-mode="atelier" aria-pressed="false">
+            <span class="nm">Atelier</span>
+            <span class="desc">You&rsquo;re in the loop &middot; every quote, every sample</span>
+            <span class="indicator"><span class="d" aria-hidden="true"></span><span>switch</span></span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Product card -->
+      <section class="card prod-card reveal d4" id="prodCard">
+        <div class="card-head">
+          <h3 style="display:inline-flex;align-items:baseline;gap:10px;">
+            <span>Your piece</span>
+          </h3>
+          <button class="card-edit" type="button" id="editToggle">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 14h2.5L13 5.5 10.5 3 2 11.5z"/>
+              <path d="M10 3.5 12.5 6"/>
+            </svg>
+            <span>Edit</span>
+          </button>
+        </div>
+
+        <span class="prod-eye">A-1827 &middot; turned beech &amp; ceramic</span>
+        <div class="prod-title" id="prodTitle">Hanging lamp, no. 04</div>
+        <p class="prod-sub" id="prodSub">Turned beech canopy &middot; ceramic shade &middot; 1.8m linen cord.</p>
+
+        <div class="prod-stage" aria-label="Three-quarter view of your piece">
+          <svg viewBox="0 0 320 320" preserveAspectRatio="xMidYMid meet" fill="none" stroke="currentColor"
+               stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Ceiling line + canopy -->
+            <line x1="60" y1="30" x2="260" y2="30" stroke="rgba(244,237,224,0.40)" stroke-width="1" />
+            <ellipse cx="160" cy="30" rx="22" ry="4" stroke="rgba(244,237,224,0.85)" />
+            <rect x="146" y="30" width="28" height="8" rx="1" stroke="rgba(244,237,224,0.85)" />
+
+            <!-- Cord -->
+            <path d="M160 38 C160 80, 158 130, 160 180"
+                  stroke="rgba(244,237,224,0.80)" stroke-width="1.1" />
+            <path d="M160 38 C160 80, 158 130, 160 180"
+                  stroke="var(--accent)" stroke-width="1.3" stroke-dasharray="2 3" />
+
+            <!-- Shade -->
+            <ellipse cx="160" cy="180" rx="6" ry="1.6" stroke="rgba(244,237,224,0.85)" />
+            <ellipse cx="160" cy="190" rx="20" ry="5" stroke="rgba(244,237,224,0.85)" />
+            <path d="M140 190 C 120 224, 100 258, 92 290" stroke="rgba(244,237,224,0.92)" />
+            <path d="M180 190 C 200 224, 220 258, 228 290" stroke="rgba(244,237,224,0.92)" />
+            <ellipse cx="160" cy="290" rx="68" ry="11" stroke="rgba(244,237,224,0.92)" />
+            <ellipse cx="160" cy="290" rx="58" ry="8" stroke="rgba(244,237,224,0.30)" stroke-dasharray="1 3" />
+
+            <!-- Warm glow -->
+            <ellipse cx="160" cy="264" rx="40" ry="20" fill="rgba(240,179,90,0.16)" stroke="none" />
+            <ellipse cx="160" cy="272" rx="24" ry="13" fill="rgba(255,214,135,0.22)" stroke="none" />
+
+            <circle cx="160" cy="252" r="5" stroke="rgba(244,237,224,0.25)" />
+
+            <!-- Dim callouts -->
+            <g stroke="rgba(244,237,224,0.25)" stroke-width="0.5" fill="none">
+              <line x1="252" y1="190" x2="280" y2="190"/>
+              <line x1="252" y1="290" x2="280" y2="290"/>
+              <line x1="276" y1="190" x2="276" y2="290"/>
+            </g>
+            <text x="284" y="245" fill="rgba(244,237,224,0.45)" font-family="JetBrains Mono, monospace" font-size="9">188 mm</text>
+            <text x="92" y="312" fill="rgba(244,237,224,0.45)" font-family="JetBrains Mono, monospace" font-size="9">&#8960; 136</text>
+          </svg>
+
+          <div class="file-line">
+            <span>lamp_04.step</span>
+            <span>view: &frac34; front</span>
+          </div>
+        </div>
+
+        <div class="prod-specs">
+          <div class="spec"><span class="k">Material</span><span class="v" id="specMat">Premium</span></div>
+          <div class="spec"><span class="k">Quantity</span><span class="v" id="specQty">Just one</span></div>
+          <div class="spec"><span class="k">Timeline</span><span class="v" id="specTime">Tight</span></div>
+          <div class="spec"><span class="k">Audience</span><span class="v" id="specAud">Myself</span></div>
+        </div>
+
+        <!-- Edit form (revealed when card.editing) -->
+        <form class="prod-edit-form" id="prodEditForm" onsubmit="return false">
+          <div class="field">
+            <label for="ed-title">Title</label>
+            <input id="ed-title" type="text" value="Hanging lamp, no. 04" />
+          </div>
+          <div class="field">
+            <label for="ed-sub">One-line description</label>
+            <textarea id="ed-sub">Turned beech canopy · ceramic shade · 1.8m linen cord.</textarea>
+          </div>
+          <div class="spec-grid-edit">
+            <div class="field">
+              <label for="ed-mat">Material tier</label>
+              <input id="ed-mat" type="text" value="Premium" />
+            </div>
+            <div class="field">
+              <label for="ed-qty">Quantity</label>
+              <input id="ed-qty" type="text" value="Just one" />
+            </div>
+            <div class="field">
+              <label for="ed-time">Timeline</label>
+              <input id="ed-time" type="text" value="Tight" />
+            </div>
+            <div class="field">
+              <label for="ed-aud">Audience</label>
+              <input id="ed-aud" type="text" value="Myself" />
+            </div>
+          </div>
+          <div class="form-foot">
+            <button type="button" class="btn-ghost" id="editCancel">Cancel</button>
+            <button type="submit" class="btn-primary" id="editSave">Save changes</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- Quote card -->
+      <section class="card reveal d5">
+        <div class="card-head">
+          <h3>Quote</h3>
+          <span style="font-family:var(--mono);font-size:11px;color:var(--fg-3);">holding</span>
+        </div>
+        <div class="quote-figure">$840<small> USD</small></div>
+        <p class="quote-line">Returning in <b style="color:var(--fg-1);">44 hours</b>. Held while two decisions stay open.</p>
+        <div class="quote-bar" aria-hidden="true"><i></i></div>
+        <div class="quote-meta">
+          <span>brief received</span>
+          <span>quote ready</span>
+        </div>
+      </section>
+
+    </aside>
+
+  </div>
+</main>
+
+<!-- ── Confirm modal for mode switch ─────────────────── -->
+<div class="modal" id="modeModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modalTitle">
+  <div class="modal-scrim" data-close></div>
+  <div class="modal-sheet" role="document">
+    <div class="modal-eye"><span class="d" aria-hidden="true"></span><span id="modalEye">Switching mode</span></div>
+    <h2 id="modalTitle">Step in?</h2>
+    <p id="modalBody">You&rsquo;re about to open the whole workshop floor. Are you sure?</p>
+    <ul class="modal-list" id="modalList"></ul>
+    <div class="modal-foot">
+      <button class="ghost" type="button" data-close>Stay in Concierge</button>
+      <button class="commit" type="button" id="modalCommit">Step in</button>
+    </div>
+  </div>
+</div>
+
+<!-- Tiny toast for confirmations -->
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <span class="tk">&#10003;</span>
+  <span id="toastText">Saved.</span>
+</div>
+
+<script>
+(() => {
+  const $  = (s, r=document) => r.querySelector(s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+
+  // ── Toast ──────────────────────────────────────────────
+  const toast = $('#toast'), toastText = $('#toastText');
+  let toastTimer;
+  function showToast(msg) {
+    toastText.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2400);
+  }
+
+  // ── Decisions ──────────────────────────────────────────
+  $$('.decision').forEach(card => {
+    if (card.classList.contains('resolved')) return;
+    const opts = $$('.opt', card);
+    const confirm = $('.dec-confirm', card);
+    let picked = null;
+
+    opts.forEach(o => o.addEventListener('click', () => {
+      picked = o.dataset.val;
+      opts.forEach(x => x.setAttribute('aria-pressed', x === o ? 'true' : 'false'));
+      card.classList.add('has-pick');
+    }));
+
+    confirm.addEventListener('click', () => {
+      if (!picked) return;
+      const opt = opts.find(o => o.dataset.val === picked);
+      const name = $('.nm', opt).textContent;
+      card.classList.add('resolved');
+      card.querySelector('.rn-text').textContent = name + '.';
+      card.querySelector('.resolved-note').style.display = 'flex';
+      updateDecCount();
+      showToast('Confirmed &middot; ' + name);
+    });
+
+    $('.dec-defer', card).addEventListener('click', () => {
+      card.classList.add('resolved');
+      card.querySelector('.rn-text').textContent = 'left with us.';
+      card.querySelector('.resolved-note').style.display = 'flex';
+      updateDecCount();
+      showToast('Left with us.');
+    });
+  });
+
+  function updateDecCount() {
+    const all = $$('.decision');
+    const open = all.filter(c => !c.classList.contains('resolved')).length;
+    const done = all.length - open;
+    $('#decCount').textContent = open + ' open · ' + done + ' resolved';
+  }
+
+  // ── Mode toggle with confirm modal ─────────────────────
+  const barBtns  = $$('#modePillBar button');
+  const cardBtns = $$('.mode-switch button');
+  const modeExplain = $('#modeExplain');
+  const modal = $('#modeModal');
+  const modalEye = $('#modalEye');
+  const modalTitle = $('#modalTitle');
+  const modalBody = $('#modalBody');
+  const modalList = $('#modalList');
+  const modalCommit = $('#modalCommit');
+  const modalGhost = modal.querySelector('.ghost');
+
+  const EXPLAIN = {
+    concierge: '<b>Concierge.</b> We run the project. The dashboard stays quiet \u2014 you only hear from us when something needs you. Expect that two or three times across the whole project.',
+    atelier:   '<b>Atelier.</b> You\u2019re in the loop on everything \u2014 every quote, every sample, every substitution before it happens. Same price.',
+  };
+
+  const COPY = {
+    'concierge->atelier': {
+      eye:   'Switching to Atelier',
+      title: 'Step in?',
+      body:  'You\u2019re about to take the wheel. From here, every quote, sample and substitution lands in your court before it happens.',
+      list: [
+        '<b>15\u201325 decisions</b> will reach you across the project',
+        '<b>3\u20135 updates a week</b>, sometimes more during sourcing',
+        'Same price. You can hand it back any time.',
+      ],
+      ghost: 'Stay in Concierge',
+      commit: 'Step in',
+    },
+    'atelier->concierge': {
+      eye:   'Switching to Concierge',
+      title: 'Hand it back?',
+      body:  'We\u2019ll take over the routine calls. The dashboard goes quiet \u2014 you\u2019ll only hear from us when something genuinely needs you.',
+      list: [
+        '<b>Two or three decisions</b> across the whole project',
+        'Open questions will be closed using our defaults',
+        'You can step back in any time. Same price.',
+      ],
+      ghost: 'Stay in Atelier',
+      commit: 'Hand it back',
+    },
+  };
+
+  let pendingMode = null;
+
+  function openModal(fromMode, toMode) {
+    pendingMode = toMode;
+    const k = COPY[fromMode + '->' + toMode];
+    if (!k) return;
+    modalEye.textContent = k.eye;
+    modalTitle.textContent = k.title;
+    modalBody.textContent = k.body;
+    modalList.innerHTML = k.list.map(t => '<li>' + t + '</li>').join('');
+    modalGhost.textContent = k.ghost;
+    modalCommit.textContent = k.commit;
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+  }
+  function closeModal() {
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    pendingMode = null;
+  }
+
+  modal.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', closeModal));
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+  });
+  modalCommit.addEventListener('click', () => {
+    if (pendingMode) applyMode(pendingMode, true);
+    closeModal();
+  });
+
+  function applyMode(mode, fromUser = false) {
+    document.body.setAttribute('data-mode', mode);
+    barBtns.forEach(b => {
+      const on = b.dataset.mode === mode;
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+    cardBtns.forEach(b => {
+      const on = b.dataset.mode === mode;
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      $('.indicator span:last-child', b).textContent = on ? 'active' : 'switch';
+    });
+    modeExplain.innerHTML = EXPLAIN[mode];
+    if (fromUser) {
+      showToast(mode === 'concierge'
+        ? 'Handed back. We\u2019ll keep things quiet.'
+        : 'Stepped in. You\u2019ll see every call now.');
+    }
+  }
+
+  function requestMode(toMode) {
+    const fromMode = document.body.getAttribute('data-mode') || 'concierge';
+    if (fromMode === toMode) return;
+    openModal(fromMode, toMode);
+  }
+
+  barBtns.forEach(b => b.addEventListener('click', () => requestMode(b.dataset.mode)));
+  cardBtns.forEach(b => b.addEventListener('click', () => requestMode(b.dataset.mode)));
+
+  // "See everything" — opens the transparent timeline (stays in concierge)
+  const behind = $('#behind');
+  const quietStep = $('#quietStepIn');
+  const behindClose = $('#behindClose');
+  const behindTake = $('#behindTake');
+
+  function openBehind() {
+    behind.classList.add('open');
+    document.body.classList.add('behind-open');
+    requestAnimationFrame(() => {
+      const top = behind.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top, behavior: 'smooth' });
+    });
+  }
+  function closeBehind() {
+    behind.classList.remove('open');
+    document.body.classList.remove('behind-open');
+  }
+  if (quietStep)   quietStep.addEventListener('click', openBehind);
+  if (behindClose) behindClose.addEventListener('click', closeBehind);
+  if (behindTake)  behindTake.addEventListener('click', () => requestMode('atelier'));
+
+  // ── Product edit ───────────────────────────────────────
+  const prodCard = $('#prodCard');
+  const editToggle = $('#editToggle');
+  const editCancel = $('#editCancel');
+  const editForm   = $('#prodEditForm');
+  const crumbTitle = $('#crumbTitle');
+
+  const fields = {
+    title: $('#prodTitle'), sub: $('#prodSub'),
+    mat: $('#specMat'), qty: $('#specQty'),
+    time: $('#specTime'), aud: $('#specAud'),
+  };
+  const inputs = {
+    title: $('#ed-title'), sub: $('#ed-sub'),
+    mat: $('#ed-mat'),    qty: $('#ed-qty'),
+    time: $('#ed-time'),  aud: $('#ed-aud'),
+  };
+
+  function openEdit() {
+    Object.keys(inputs).forEach(k => inputs[k].value = fields[k].textContent.trim());
+    prodCard.classList.add('editing');
+    editToggle.querySelector('span').textContent = 'Editing';
+    setTimeout(() => inputs.title.focus(), 50);
+  }
+  function closeEdit(save) {
+    if (save) {
+      Object.keys(inputs).forEach(k => fields[k].textContent = inputs[k].value.trim());
+      crumbTitle.textContent = inputs.title.value.trim() || 'Untitled';
+      showToast('Product details updated.');
+    }
+    prodCard.classList.remove('editing');
+    editToggle.querySelector('span').textContent = 'Edit';
+  }
+  editToggle.addEventListener('click', () => {
+    if (prodCard.classList.contains('editing')) closeEdit(false);
+    else openEdit();
+  });
+  editCancel.addEventListener('click', () => closeEdit(false));
+  editForm.addEventListener('submit', () => closeEdit(true));
+
+  // ── Boot ───────────────────────────────────────────────
+  // ── Backend hydration ──────────────────────────────────
+  // Everything below is brief-derived. The dashboard is opened from the
+  // Concierge as "/Project Dashboard.html?p=<id>"; with no id it shows a
+  // "no project" state instead of stale demo content.
+  const params = new URLSearchParams(location.search);
+  const projectId = params.get('p');
+
+  function showNoProject(msg) {
+    const page = $('.page');
+    if (page) page.innerHTML =
+      '<section class="status-row reveal" style="flex-direction:column;align-items:flex-start;gap:10px;">' +
+      '<span class="eye"><span class="dot" aria-hidden="true"></span><span>No project loaded</span></span>' +
+      '<div class="project">' + (msg || 'Submit a brief to open a project.') + '</div>' +
+      '</section>';
+  }
+
+  function patchProject(patch) {
+    if (!projectId) return;
+    fetch('/api/projects/' + encodeURIComponent(projectId), {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(patch),
+    }).catch(err => console.error('[Ariadne] PATCH failed:', err));
+  }
+
+  function emptyState(text) {
+    return '<li class="tl" style="opacity:0.6;list-style:none;">' +
+           '<div class="body"><p class="why">' + text + '</p></div></li>';
+  }
+
+  function hydrate(p) {
+    const title = (p.product && p.product.title) || 'Project';
+    document.title = title + ' — Ariadne';
+    if (crumbTitle) crumbTitle.textContent = title;
+    const ref = $('.bar-ref'); if (ref) ref.textContent = p.reference;
+
+    const proj = $('.status-row .project'); if (proj) proj.textContent = title;
+    const statusEye = $('.status-row .eye span:last-child');
+    if (statusEye) statusEye.textContent = p.status || 'Brief received';
+
+    // Quote
+    const amount = p.quote ? p.quote.amount : null;
+    const fig = $('.quote-figure');
+    if (fig && amount != null) fig.innerHTML = '$' + amount + '<small> USD</small>';
+    const minis = $$('.status-r .mini .v');
+    if (minis[0]) minis[0].textContent = '—';                 // ship date: TBD
+    if (minis[1] && amount != null) minis[1].textContent = '$' + amount;
+    const qline = $('.quote-line');
+    if (qline) qline.textContent = (p.quote && p.quote.caption) || 'Returning with your quote.';
+
+    // Stage thread (brief-derived: 3 personal / 5 production)
+    const strip = $('.thread-strip');
+    const meta  = $('.thread-head .meta');
+    if (strip && Array.isArray(p.stages)) {
+      const business = p.brief && p.brief.audience === 'customers';
+      if (meta) meta.textContent = business
+        ? 'Production run · ' + p.stages.length + ' stages'
+        : 'Personal commission · ' + p.stages.length + ' stages';
+      $$('.stage', strip).forEach(el => el.remove());
+      p.stages.forEach(s => {
+        const div = document.createElement('div');
+        div.className = 'stage' + (s.state === 'now' ? ' now' : '');
+        div.innerHTML =
+          '<span class="node">' + String(s.order).padStart(2, '0') + '</span>' +
+          '<div class="body"><span class="lbl">' + s.label + '</span>' +
+          '<span class="note">' + s.note + '</span></div>';
+        strip.appendChild(div);
+      });
+    }
+
+    // Product card + edit form
+    const sp = (p.product && p.product.specs) || {};
+    if (fields.title) fields.title.textContent = title;
+    if (fields.sub && p.product) fields.sub.textContent = p.product.subtitle;
+    if (fields.mat)  fields.mat.textContent  = sp.material || '—';
+    if (fields.qty)  fields.qty.textContent  = sp.quantity || '—';
+    if (fields.time) fields.time.textContent = sp.timeline || '—';
+    if (fields.aud)  fields.aud.textContent  = sp.audience || '—';
+    const eye = $('.prod-eye');
+    if (eye) eye.textContent = p.reference + ' · turned beech & ceramic';
+    if (inputs.title) inputs.title.value = title;
+    if (inputs.sub && p.product) inputs.sub.value = p.product.subtitle;
+    if (inputs.mat)  inputs.mat.value  = sp.material || '';
+    if (inputs.qty)  inputs.qty.value  = sp.quantity || '';
+    if (inputs.time) inputs.time.value = sp.timeline || '';
+    if (inputs.aud)  inputs.aud.value  = sp.audience || '';
+
+    // Notes → into the quiet panel's "last move" line
+    const what = $('.quiet-last .what span:last-child');
+    if (what) what.innerHTML = p.notes
+      ? 'From your brief: <b>' + p.notes.replace(/</g, '&lt;') + '</b>'
+      : 'Brief filed · awaiting first move';
+
+    // Fully brief-derived: no narrative yet → explicit empty states.
+    const tl = $('#behind ol.timeline');
+    if (tl) tl.innerHTML = emptyState('Nothing yet — your brief is in review. This fills in as work begins.');
+    const decs = $('.decisions');
+    if (decs) decs.innerHTML =
+      '<p class="dec-context" style="opacity:0.6;">No decisions yet — your brief is in review. We’ll post calls here as they come up.</p>';
+    const jl = $('.journal-list');
+    if (jl) jl.innerHTML =
+      '<li class="j" style="opacity:0.6;"><div class="txt">Brief received. The journal fills in as work begins.</div></li>';
+
+    // Mode — reuse the existing applyMode so pill/body/explain stay in sync.
+    applyMode(p.mode === 'atelier' ? 'atelier' : 'concierge');
+
+    // Two-way: persist mode switches and product edits.
+    modalCommit.addEventListener('click', () =>
+      patchProject({ mode: document.body.getAttribute('data-mode') }));
+    editForm.addEventListener('submit', () => patchProject({
+      product: {
+        title: fields.title.textContent.trim(),
+        subtitle: fields.sub.textContent.trim(),
+        material: fields.mat.textContent.trim(),
+        quantity: fields.qty.textContent.trim(),
+        timeline: fields.time.textContent.trim(),
+        audience: fields.aud.textContent.trim(),
+      },
+    }));
+
+    updateDecCount();
+  }
+
+  if (!projectId) {
+    showNoProject();
+  } else {
+    fetch('/api/projects/' + encodeURIComponent(projectId))
+      .then(r => r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status)))
+      .then(hydrate)
+      .catch(err => {
+        console.error('[Ariadne] could not load project:', err);
+        showNoProject('Could not load this project. Is the backend running?');
+      });
+  }
+
+  updateDecCount();
+})();
+</script>
+</body>
+</html>

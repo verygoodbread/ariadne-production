@@ -1,0 +1,62 @@
+/* ============================================================
+   Ariadne — Design Tokens (single source of truth)
+   Extracted from project/The Thread v4.html
+   Every design-system page imports this file so the swatches
+   and samples stay in sync with the product.
+   ============================================================ */
+
+:root {
+  /* ---- Type ---- */
+  --serif: "EB Garamond", "Cormorant Garamond", Georgia, serif;
+  --sans:  "Inter", system-ui, sans-serif;
+
+  /* ---- Motion ---- */
+  --ease:  cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* ---- Core palette (default = "aurora") ---- */
+  --ink:         #06070d;  /* canvas / background          */
+  --ink-soft:    #f1ebde;  /* primary text on ink (paper)  */
+  --warm-bot:    #ff9450;  /* bloom gradient — base        */
+  --warm-mid:    #d24a8a;  /* bloom gradient — mid          */
+  --warm-top:    #1c1d3a;  /* bloom gradient — top          */
+  --spark:       #ffd2a8;  /* highlight glow / emphasis     */
+  --accent:      #ff9d6a;  /* primary accent / interactive  */
+  --accent-soft: rgba(255,157,106,0.55);
+
+  /* ---- Surface set (text + rules on dark) ---- */
+  --ink-2:       #f1ebde;
+  --ink-2-mid:   rgba(241,235,222,0.72);
+  --ink-2-low:   rgba(241,235,222,0.42);
+  --rule:        rgba(241,235,222,0.10);  /* hairline borders */
+  --ochre:       var(--accent);
+  --ochre-soft:  color-mix(in srgb, var(--accent) 12%, transparent);
+
+  --selection-ink: #160a02; /* text colour on ::selection   */
+
+  /* ---- Layout ---- */
+  --max-product: 1100px;
+  --max-cta:      900px;
+  --max-copy:     38ch;
+
+  /* ---- Radii ---- */
+  --r-pill:  2px;
+  --r-kbd:   4px;
+  --r-card: 10px;
+  --r-card-lg: 14px;
+}
+
+/* ---- Named palettes ----------------------------------------
+   Applied at runtime via body[data-palette="…"]; the section
+   themes cross-fade through these as the page scrolls.
+   ------------------------------------------------------------ */
+body[data-palette="aurora"]    { --ink:#06070d; --warm-bot:#ff9450; --warm-mid:#d24a8a; --warm-top:#1c1d3a; --spark:#ffd2a8; --accent:#ff9d6a; --accent-soft:rgba(255,157,106,0.55); }
+/* parchment, espresso, burnt sienna — library at dusk */
+body[data-palette="vellum"]    { --ink:#15110b; --warm-bot:#c89668; --warm-mid:#8a4a30; --warm-top:#2a1c14; --spark:#efd9ad; --accent:#b8784a; --accent-soft:rgba(184,120,74,0.55); }
+/* newsprint, oxide, brass — cool editorial */
+body[data-palette="slate"]     { --ink:#0d0e12; --warm-bot:#9d8a72; --warm-mid:#4a4654; --warm-top:#18181f; --spark:#e6dcc4; --accent:#a78458; --accent-soft:rgba(167,132,88,0.55); }
+body[data-palette="ember"]     { --ink:#0a0907; --warm-bot:#f0b35a; --warm-mid:#c98032; --warm-top:#1a1208; --spark:#ffd687; --accent:#e3a85e; --accent-soft:rgba(227,168,94,0.55); }
+body[data-palette="dawn"]      { --ink:#08060e; --warm-bot:#ffb05a; --warm-mid:#d96a52; --warm-top:#2a1430; --spark:#ffd6a0; --accent:#ff9a6c; --accent-soft:rgba(255,154,108,0.55); }
+body[data-palette="twilight"]  { --ink:#07071a; --warm-bot:#b09ce6; --warm-mid:#6a4ec7; --warm-top:#14133a; --spark:#e3d6ff; --accent:#a78bff; --accent-soft:rgba(167,139,255,0.55); }
+body[data-palette="verdigris"] { --ink:#050d0c; --warm-bot:#6cc2a3; --warm-mid:#3c8a7b; --warm-top:#0c1f1c; --spark:#c6f0dc; --accent:#7ad2b0; --accent-soft:rgba(122,210,176,0.55); }
+body[data-palette="rose"]      { --ink:#0e0608; --warm-bot:#f4cba8; --warm-mid:#c7596f; --warm-top:#2a0e15; --spark:#ffe3d4; --accent:#e98a9c; --accent-soft:rgba(233,138,156,0.55); }
+body[data-palette="ocean"]     { --ink:#04070f; --warm-bot:#79d7e6; --warm-mid:#2a8ec4; --warm-top:#0a1730; --spark:#d3f1ff; --accent:#6cc7e3; --accent-soft:rgba(108,199,227,0.55); }
