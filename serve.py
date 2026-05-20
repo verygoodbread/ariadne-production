@@ -20,6 +20,7 @@ import json
 import os
 import queue
 import sqlite3
+import ssl
 import threading
 import time
 import urllib.request
@@ -34,9 +35,47 @@ DATA_DIR = os.path.join(ROOT, "data")
 DB_PATH = os.path.join(DATA_DIR, "ariadne.db")
 PORT = 8772
 
+
+def load_env_file():
+    """Pull KEY=VALUE pairs from a local .env into os.environ (won't override
+    anything already set). Stdlib-only; no python-dotenv dependency."""
+    path = os.path.join(ROOT, ".env")
+    if not os.path.exists(path):
+        return
+    with open(path, encoding="utf-8") as f:
+        for raw in f:
+            line = raw.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            k, v = line.split("=", 1)
+            k, v = k.strip(), v.strip()
+            if (len(v) >= 2 and v[0] == v[-1] and v[0] in ("'", '"')):
+                v = v[1:-1]
+            os.environ.setdefault(k, v)
+
+
+load_env_file()
+
 ANTHROPIC_URL = "https://api.anthropic.com/v1/messages"
 ANTHROPIC_MODEL = "claude-sonnet-4-6"
 ANTHROPIC_VERSION = "2023-06-01"
+
+
+def _ssl_context():
+    """macOS Python from python.org ships without a CA bundle; fall back to
+    the system CA so urllib can do TLS to api.anthropic.com."""
+    for path in (
+        os.environ.get("SSL_CERT_FILE"),
+        "/etc/ssl/cert.pem",                  # macOS
+        "/etc/ssl/certs/ca-certificates.crt", # Debian/Ubuntu
+        "/etc/pki/tls/certs/ca-bundle.crt",   # RHEL/Fedora
+    ):
+        if path and os.path.isfile(path):
+            return ssl.create_default_context(cafile=path)
+    return ssl.create_default_context()
+
+
+SSL_CTX = _ssl_context()
 
 # Serialises every read-modify-write of state_json + the per-project id counter.
 WRITE_LOCK = threading.Lock()
@@ -294,10 +333,29 @@ def list_projects():
             "id": r["id"], "reference": r["reference"],
             "title": (state.get("product", {}).get("title")
                       or design.get("title", "Project")),
+            "nickname": state.get("nickname", ""),
+            "tags": state.get("tags", []),
             "mode": state.get("mode") or normalize_mode(brief.get("mode")),
             "createdAt": r["created_at"],
         })
     return out
+
+
+def delete_project(pid):
+    with WRITE_LOCK:
+        conn = db()
+        try:
+            cur = conn.execute("DELETE FROM projects WHERE id=?", (pid,))
+            conn.commit()
+            deleted = cur.rowcount > 0
+        finally:
+            conn.close()
+    if deleted:
+        # Wake any open SSE subscribers so their next reload() returns 404.
+        notify(pid)
+        with SUB_LOCK:
+            SUBSCRIBERS.pop(pid, None)
+    return deleted
 
 
 def _save_state(pid, mutate):
@@ -350,6 +408,15 @@ def publish(pid, draft):
     if not isinstance(draft, dict):
         raise ValueError("publish body must be an object")
 
+    today_short = datetime.now().strftime("%-d %b")
+    today_when = datetime.now().strftime("today · %H:%M")
+    placeholders = {"", "unknown", "tbd", "n/a", "none", "null"}
+
+    def clean_date(v, fallback):
+        if not isinstance(v, str) or v.strip().lower() in placeholders:
+            return fallback
+        return v
+
     def mutate(state):
         seq = state.setdefault("_ids", {"d": 0, "t": 0, "j": 0})
         for kind, prefix in (("decisions", "d"), ("timeline", "t"), ("journal", "j")):
@@ -365,6 +432,11 @@ def publish(pid, draft):
                 if kind == "decisions":
                     item.setdefault("status", "open")
                     item.setdefault("chosen", None)
+                    item["deadline"] = clean_date(item.get("deadline"), today_short)
+                elif kind == "timeline":
+                    item["date"] = clean_date(item.get("date"), today_short)
+                elif kind == "journal":
+                    item["when"] = clean_date(item.get("when"), today_when)
                 iid = item.get("id")
                 if iid and iid in by_id:
                     arr[by_id[iid]] = item
@@ -466,8 +538,15 @@ COMPOSE_SYSTEM = (
     "Decisions are open questions the customer must answer (give 2–4 concrete "
     "options each). Timeline entries are milestones (status: next/now/done). "
     "Journal entries are short factual log lines. Keep copy concise and in the "
-    "studio's calm, plain voice. Never invent prices, dates, or supplier names "
-    "that are not in the note."
+    "studio's calm, plain voice. Never invent prices or supplier names that are "
+    "not in the note.\n\n"
+    "DATES: The project context gives you today's date. Use it: 'today' or no "
+    "date mentioned → use today's date (formatted like '20 May'). 'tomorrow' → "
+    "the next calendar day. Relative phrases like 'next week' or 'in 3 days' → "
+    "resolve to a concrete date. For journal 'when' fields, prefer 'today · "
+    "HH:MM' style when you have a time, otherwise just the date. Never output "
+    "'unknown', 'TBD', or an empty date — if you genuinely don't have one, use "
+    "today's date."
 )
 
 
@@ -481,11 +560,15 @@ def compose(pid, text):
     if not (text or "").strip():
         return None, "narration is empty"
 
+    now = datetime.now()
     context = {
         "reference": proj["reference"],
         "piece": proj["product"]["title"],
         "stages": [s["label"] for s in proj["stages"]],
         "existing_decisions": [d.get("question") for d in proj["decisions"]],
+        "today": now.strftime("%-d %B %Y"),           # e.g. "20 May 2026"
+        "today_short": now.strftime("%-d %b"),         # e.g. "20 May"
+        "now_time": now.strftime("today · %H:%M"),     # e.g. "today · 14:08"
     }
     body = {
         "model": ANTHROPIC_MODEL,
@@ -515,7 +598,7 @@ def compose(pid, text):
         method="POST",
     )
     try:
-        with urllib.request.urlopen(req, timeout=60) as resp:
+        with urllib.request.urlopen(req, timeout=60, context=SSL_CTX) as resp:
             payload = json.loads(resp.read())
     except urllib.error.HTTPError as e:
         detail = e.read().decode(errors="replace")[:300]
@@ -577,6 +660,12 @@ class Handler(SimpleHTTPRequestHandler):
             return self._api("PATCH", segs)
         self.send_error(405)
 
+    def do_DELETE(self):
+        segs, path = self._segments()
+        if path.startswith("/api/"):
+            return self._api("DELETE", segs)
+        self.send_error(405)
+
     def _api(self, method, segs):
         try:
             # segs == ["api", "projects", ...] | ["api", "designs", id]
@@ -598,6 +687,9 @@ class Handler(SimpleHTTPRequestHandler):
                     if method == "PATCH":
                         p = patch_project(pid, self._body())
                         return self._json(p) if p else self._json({"error": "not found"}, 404)
+                    if method == "DELETE":
+                        ok = delete_project(pid)
+                        return self._json({"deleted": pid}) if ok else self._json({"error": "not found"}, 404)
                 if len(segs) == 4:
                     pid, sub = segs[2], segs[3]
                     if method == "POST" and sub == "compose":
