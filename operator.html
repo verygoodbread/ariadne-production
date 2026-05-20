@@ -69,6 +69,67 @@
   .rm{background:transparent;border:1px solid var(--rule);color:var(--fg-3);
     border-radius:6px;cursor:pointer;font-size:12px;padding:4px 9px}
   .empty{color:var(--fg-3);font-size:13px;font-style:italic}
+  .panel{margin:14px 0 18px;padding:14px;background:var(--panel);
+    border:1px solid var(--rule);border-radius:8px;display:grid;
+    grid-template-columns:1fr 1fr;gap:14px}
+  .panel label{display:block;font-size:10px;letter-spacing:0.07em;
+    text-transform:uppercase;color:var(--fg-3);margin-bottom:5px}
+  .panel input{width:100%;background:var(--panel-2);border:1px solid var(--rule);
+    border-radius:6px;color:var(--fg-1);padding:7px 9px;font-family:var(--sans);
+    font-size:13px}
+  .panel input:focus{outline:none;border-color:var(--accent)}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;align-items:center;
+    min-height:32px;padding:5px;background:var(--panel-2);
+    border:1px solid var(--rule);border-radius:6px}
+  .tags input{background:transparent;border:none;flex:1;min-width:90px;padding:3px}
+  .chip{display:inline-flex;align-items:center;gap:6px;background:var(--panel);
+    border:1px solid var(--rule);border-radius:11px;padding:2px 4px 2px 9px;
+    font-size:12px;color:var(--fg-2)}
+  .chip button{background:transparent;border:none;color:var(--fg-3);
+    cursor:pointer;font-size:14px;line-height:1;padding:0 4px}
+  .chip button:hover{color:#e0915f}
+  .proj-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
+  .proj-tags .ct{font-size:10px;color:var(--fg-3);background:rgba(244,237,224,0.06);
+    border-radius:8px;padding:1px 7px}
+  .proj .nn{font-family:var(--serif);font-style:italic;font-size:13px;
+    color:var(--fg-2);margin-top:2px}
+  button.danger{background:transparent;color:#e0915f;border:1px solid rgba(224,145,95,0.4);
+    border-radius:7px;padding:8px 14px;font-size:13px;cursor:pointer;
+    font-family:var(--sans);grid-column:1/-1;justify-self:start}
+  button.danger:hover{background:rgba(224,145,95,0.08);border-color:#e0915f}
+  .activity{margin:18px 0;border:1px solid var(--rule);border-radius:8px;
+    background:var(--panel);padding:14px}
+  .act-h{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+  .act-h h3{font-family:var(--serif);font-size:15px;font-weight:500}
+  .act-h .live{font-size:10px;letter-spacing:0.08em;text-transform:uppercase;
+    color:var(--fg-3);font-family:var(--mono)}
+  .act-h .live .pulse{display:inline-block;width:6px;height:6px;border-radius:50%;
+    background:#9bbf8a;margin-right:5px;vertical-align:middle;
+    box-shadow:0 0 0 0 rgba(155,191,138,0.6);animation:pulse 2.2s infinite var(--ease)}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(155,191,138,0.55)}
+    70%{box-shadow:0 0 0 6px rgba(155,191,138,0)}
+    100%{box-shadow:0 0 0 0 rgba(155,191,138,0)}}
+  .act-sub{margin-top:14px}
+  .act-sub:first-child{margin-top:0}
+  .act-sub h4{font-size:10px;letter-spacing:0.08em;text-transform:uppercase;
+    color:var(--fg-3);margin-bottom:6px}
+  .act-row{display:grid;grid-template-columns:auto 1fr auto;gap:10px;
+    align-items:baseline;padding:7px 0;border-top:1px solid var(--rule)}
+  .act-row:first-of-type{border-top:none}
+  .act-row .id{font-family:var(--mono);font-size:10px;color:var(--fg-3)}
+  .act-row .body{color:var(--fg-1);font-size:13px}
+  .act-row .body .meta{color:var(--fg-3);font-size:11px;margin-top:2px;
+    font-family:var(--mono)}
+  .pill{font-size:10px;letter-spacing:0.06em;text-transform:uppercase;
+    border-radius:10px;padding:2px 9px;font-family:var(--mono);
+    border:1px solid var(--rule);color:var(--fg-3)}
+  .pill.open{color:var(--accent);border-color:rgba(184,120,74,0.5)}
+  .pill.resolved{color:#9bbf8a;border-color:rgba(155,191,138,0.4)}
+  .pill.deferred{color:var(--fg-3);font-style:italic}
+  .pill.tl-next{color:var(--fg-3)}
+  .pill.tl-now{color:var(--accent);border-color:rgba(184,120,74,0.5)}
+  .pill.tl-done{color:#9bbf8a;border-color:rgba(155,191,138,0.4)}
+  .act-empty{color:var(--fg-3);font-style:italic;font-size:13px;padding:6px 0}
 </style>
 </head>
 <body>
@@ -83,6 +144,30 @@
     <main class="main">
       <div id="picked" style="display:none">
         <div class="ctx" id="ctx"></div>
+        <div class="panel" id="panel">
+          <div>
+            <label for="nick">Nickname (operator only)</label>
+            <input id="nick" type="text" placeholder="e.g. Lin's mom's wedding gift" />
+          </div>
+          <div>
+            <label>Tags</label>
+            <div class="tags" id="tags">
+              <input id="tagInput" type="text" placeholder="type, press Enter" />
+            </div>
+          </div>
+          <button class="danger" id="deleteBtn" type="button">Delete project</button>
+        </div>
+
+        <section class="activity" id="activity">
+          <div class="act-h">
+            <h3>Activity</h3>
+            <span class="live"><span class="pulse"></span>live</span>
+          </div>
+          <div class="act-sub" id="aDecisions"><h4>Decisions</h4></div>
+          <div class="act-sub" id="aTimeline"><h4>Timeline</h4></div>
+          <div class="act-sub" id="aJournal"><h4>Journal</h4></div>
+        </section>
+
         <textarea id="note" placeholder="Describe, in plain language, what's happening on this project. e.g. &quot;Shortlisted Lin / Huang / Bardon for the shade — customer should pick or leave it with us. Cord length 1.8m confirmed.&quot;"></textarea>
         <div class="row">
           <button class="act" id="parseBtn">Parse with AI</button>
@@ -108,6 +193,7 @@
   const $ = s => document.querySelector(s);
   let current = null;        // selected project {id,reference,title}
   let draft = null;          // last AI draft (mutable via inputs)
+  let activityEs = null;     // live SSE for the selected project
 
   function field(label, value, ml) {
     const w = document.createElement('div');
@@ -130,8 +216,21 @@
         b.className = 'proj';
         const ref = document.createElement('div'); ref.className = 'ref'; ref.textContent = r.reference;
         const ti = document.createElement('div'); ti.className = 'ti'; ti.textContent = r.title;
+        b.append(ref, ti);
+        if (r.nickname) {
+          const nn = document.createElement('div'); nn.className = 'nn'; nn.textContent = r.nickname;
+          b.append(nn);
+        }
+        if (r.tags && r.tags.length) {
+          const tw = document.createElement('div'); tw.className = 'proj-tags';
+          r.tags.forEach(t => {
+            const c = document.createElement('span'); c.className = 'ct'; c.textContent = t;
+            tw.append(c);
+          });
+          b.append(tw);
+        }
         const mo = document.createElement('div'); mo.className = 'mo'; mo.textContent = r.mode + ' · ' + r.id;
-        b.append(ref, ti, mo);
+        b.append(mo);
         b.addEventListener('click', () => selectProject(r, b));
         list.appendChild(b);
       });
@@ -152,11 +251,172 @@
     const rb = document.createElement('b'); rb.textContent = r.reference; c.append(rb);
     c.append(' · ');
     const tb = document.createElement('b'); tb.textContent = r.title; c.append(tb);
+    $('#nick').value = r.nickname || '';
+    renderTags(r.tags || []);
     $('#note').value = '';
     $('#status').textContent = '';
     $('#draft').classList.remove('show');
     draft = null;
+    watchActivity();
   }
+
+  // ── Live activity (operator's view of customer + published state) ──
+  function closeActivity() {
+    if (activityEs) { activityEs.close(); activityEs = null; }
+  }
+
+  function watchActivity() {
+    closeActivity();
+    if (!current) return;
+    loadActivity();
+    activityEs = new EventSource('/api/projects/' + encodeURIComponent(current.id) + '/events');
+    activityEs.addEventListener('project-updated', loadActivity);
+  }
+
+  async function loadActivity() {
+    if (!current) return;
+    try {
+      const res = await fetch('/api/projects/' + encodeURIComponent(current.id));
+      if (!res.ok) return;
+      renderActivity(await res.json());
+    } catch (e) { /* connection blip, EventSource will retry */ }
+  }
+
+  const TL_BADGE = { next: 'Up next', now: 'Now', done: 'Done' };
+
+  function actRow(idStr, bodyEl, pillEl) {
+    const row = document.createElement('div'); row.className = 'act-row';
+    const id = document.createElement('span'); id.className = 'id'; id.textContent = idStr;
+    const wrap = document.createElement('span'); wrap.className = 'body'; wrap.append(bodyEl);
+    row.append(id, wrap, pillEl);
+    return row;
+  }
+
+  function renderActivity(p) {
+    // Decisions
+    const dWrap = $('#aDecisions');
+    dWrap.replaceChildren(Object.assign(document.createElement('h4'), { textContent: 'Decisions' }));
+    if (!p.decisions || !p.decisions.length) {
+      dWrap.append(Object.assign(document.createElement('div'), { className: 'act-empty', textContent: 'None yet.' }));
+    } else {
+      p.decisions.forEach(d => {
+        const body = document.createElement('span');
+        body.append(d.question || '(no question)');
+        if (d.status === 'resolved' && d.chosen) {
+          const chosen = (d.options || []).find(o => o.value === d.chosen);
+          const meta = document.createElement('div'); meta.className = 'meta';
+          meta.textContent = 'Customer picked: ' + (chosen ? chosen.name : d.chosen);
+          body.append(meta);
+        }
+        const pill = document.createElement('span');
+        pill.className = 'pill ' + (d.status || 'open');
+        pill.textContent = d.status || 'open';
+        dWrap.append(actRow(d.id || '—', body, pill));
+      });
+    }
+
+    // Timeline
+    const tWrap = $('#aTimeline');
+    tWrap.replaceChildren(Object.assign(document.createElement('h4'), { textContent: 'Timeline' }));
+    if (!p.timeline || !p.timeline.length) {
+      tWrap.append(Object.assign(document.createElement('div'), { className: 'act-empty', textContent: 'No milestones yet.' }));
+    } else {
+      p.timeline.forEach(t => {
+        const body = document.createElement('span');
+        body.append(t.title || '(untitled)');
+        if (t.date) {
+          const meta = document.createElement('div'); meta.className = 'meta';
+          meta.textContent = t.date;
+          body.append(meta);
+        }
+        const pill = document.createElement('span');
+        pill.className = 'pill tl-' + (t.status || 'now');
+        pill.textContent = TL_BADGE[t.status] || t.status || 'now';
+        tWrap.append(actRow(t.id || '—', body, pill));
+      });
+    }
+
+    // Journal
+    const jWrap = $('#aJournal');
+    jWrap.replaceChildren(Object.assign(document.createElement('h4'), { textContent: 'Journal' }));
+    if (!p.journal || !p.journal.length) {
+      jWrap.append(Object.assign(document.createElement('div'), { className: 'act-empty', textContent: 'Nothing logged yet.' }));
+    } else {
+      p.journal.forEach(j => {
+        const body = document.createElement('span'); body.append(j.text || '');
+        const when = document.createElement('span'); when.className = 'pill'; when.textContent = j.when || '';
+        jWrap.append(actRow(j.id || '—', body, when));
+      });
+    }
+  }
+
+  // ── Nickname / tags / delete ────────────────────────
+  function renderTags(tags) {
+    const wrap = $('#tags');
+    [...wrap.querySelectorAll('.chip')].forEach(c => c.remove());
+    const input = $('#tagInput');
+    tags.forEach(t => {
+      const chip = document.createElement('span'); chip.className = 'chip';
+      chip.append(t);
+      const x = document.createElement('button'); x.type = 'button';
+      x.textContent = '×';
+      x.addEventListener('click', () => {
+        current.tags = (current.tags || []).filter(v => v !== t);
+        renderTags(current.tags);
+        patchCurrent({ tags: current.tags });
+      });
+      chip.append(x);
+      wrap.insertBefore(chip, input);
+    });
+  }
+
+  function patchCurrent(patch) {
+    if (!current) return Promise.resolve();
+    return fetch('/api/projects/' + encodeURIComponent(current.id), {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(patch),
+    }).then(() => loadProjects());
+  }
+
+  $('#nick').addEventListener('change', e => {
+    if (!current) return;
+    current.nickname = e.target.value.trim();
+    patchCurrent({ nickname: current.nickname });
+  });
+
+  $('#tagInput').addEventListener('keydown', e => {
+    if (!current) return;
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      const v = e.target.value.trim().replace(/,$/, '');
+      if (!v) return;
+      current.tags = [...new Set([...(current.tags || []), v])];
+      e.target.value = '';
+      renderTags(current.tags);
+      patchCurrent({ tags: current.tags });
+    } else if (e.key === 'Backspace' && !e.target.value && current.tags && current.tags.length) {
+      current.tags = current.tags.slice(0, -1);
+      renderTags(current.tags);
+      patchCurrent({ tags: current.tags });
+    }
+  });
+
+  $('#deleteBtn').addEventListener('click', async () => {
+    if (!current) return;
+    const label = current.nickname ? `"${current.nickname}" (${current.reference})` : current.reference;
+    if (!confirm(`Delete ${label}? This removes the project, its decisions, and its history. Cannot be undone.`)) return;
+    try {
+      const res = await fetch('/api/projects/' + encodeURIComponent(current.id), { method: 'DELETE' });
+      if (!res.ok) { alert('Delete failed: ' + res.status); return; }
+      closeActivity();
+      current = null;
+      $('#picked').style.display = 'none';
+      $('#hint').style.display = '';
+      loadProjects();
+    } catch (e) {
+      alert('Delete failed: ' + e);
+    }
+  });
 
   // ── Compose ──────────────────────────────────────────
   $('#parseBtn').addEventListener('click', async () => {
@@ -262,18 +522,24 @@
   function collect() {
     const out = { decisions: [], timeline: [], journal: [] };
     document.querySelectorAll('#dDecisions .card[data-k="d"]').forEach(card => {
-      const ins = card.querySelectorAll(':scope > input, :scope > textarea');
-      const [q, ctx, stage, dl] = [...ins];
+      // Each field is wrapped in a div by field(); the first four direct
+      // div-children of the card hold question / context / stage / deadline,
+      // followed by opt-rows. Slice to the first four.
+      const ins = [...card.querySelectorAll(':scope > div > input, :scope > div > textarea')];
+      const [q, ctx, stage, dl] = ins;
+      if (!q) return;
       const options = [];
       card.querySelectorAll('.opt-row').forEach(r => {
-        const v = r.querySelector('[data-f="value"]').value.trim();
-        const nm = r.querySelector('[data-f="name"]').value.trim();
-        const me = r.querySelector('[data-f="meta"]').value.trim();
-        if (v || nm) options.push({ value: v || nm, name: nm || v, meta: me });
+        const v  = r.querySelector('[data-f="value"]')?.value.trim() || '';
+        const nm = r.querySelector('[data-f="name"]')?.value.trim() || '';
+        const me = r.querySelector('[data-f="meta"]')?.value.trim() || '';
+        if (v || nm) options.push({ value: v || nm.toLowerCase().replace(/\s+/g, '-'), name: nm || v, meta: me });
       });
       out.decisions.push({
-        question: q.value.trim(), context: ctx.value.trim(),
-        stage: stage.value.trim(), deadline: dl.value.trim(), options,
+        question: q.value.trim(), context: ctx ? ctx.value.trim() : '',
+        stage: stage ? stage.value.trim() : '',
+        deadline: dl ? dl.value.trim() : '',
+        options,
       });
     });
     document.querySelectorAll('#dTimeline .card[data-k="t"]').forEach(card => {

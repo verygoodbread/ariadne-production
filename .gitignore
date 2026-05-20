@@ -6,3 +6,6 @@ ariadne-production-design-system/
 # Backend runtime data (SQLite store)
 data/
 *.db
+
+# Local secrets
+.env
