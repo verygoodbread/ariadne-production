@@ -1211,6 +1211,7 @@
   const reveal = $('#reveal');
   const openProjectBtn = $('.rc-cta');
   let currentProject = null;   // { id, reference } once the brief is filed
+  let currentDesign = null;    // the design file handed over by the design step
 
   async function fileBrief() {
     const brief = {
@@ -1220,6 +1221,7 @@
       timeline:  state.timeline,
       notes:     state.notes,
       mode:      state.mode,
+      design:    currentDesign,
     };
     const res = await fetch('/api/projects', {
       method: 'POST',
@@ -1243,12 +1245,12 @@
     reveal.setAttribute('data-mode', concierge ? 'concierge' : 'self');
     if (concierge) {
       $('#rvDesk').textContent = 'Ariadne · Concierge desk';
-      $('#rvKicker').textContent = 'Brief received — lamp no. 04';
+      $('#rvKicker').textContent = 'Brief received — ' + ((currentDesign && currentDesign.title) || 'your piece');
       $('#rvLine').innerHTML = 'An expert will reach out within the day.';
       $('#rvSub').textContent = 'They\u2019ve read your notes and your design. You\u2019ll hear from them in your timezone. If anything moves before then, they\u2019ll say so.';
     } else {
       $('#rvDesk').textContent = 'Ariadne · Atelier desk';
-      $('#rvKicker').textContent = 'Brief received — lamp no. 04';
+      $('#rvKicker').textContent = 'Brief received — ' + ((currentDesign && currentDesign.title) || 'your piece');
       $('#rvLine').innerHTML = 'Every quote, sample, and decision will cross your desk.';
       $('#rvSub').textContent = 'You\u2019ll see every supplier quote side-by-side, annotated sample reviews, and material substitutions before they happen. Expect 3\u20135 updates per week.';
     }
@@ -1399,6 +1401,37 @@
   renderRecommendCopy();
   renderPath();
   renderLedger();
+
+  // ─── Design handoff ──────────────────────────────────────────────────
+  // The design step hands over a structured file. We just read it (no AI):
+  // ?design=<id> → fetch the record → populate "Your piece" + carry it into
+  // the brief. Defaults to the seeded sample so the page works standalone.
+  async function loadDesign() {
+    const id = new URLSearchParams(location.search).get('design') || 'lamp-04';
+    try {
+      const res = await fetch('/api/designs/' + encodeURIComponent(id));
+      if (!res.ok) throw new Error('design ' + res.status);
+      currentDesign = await res.json();
+    } catch (err) {
+      console.error('[Ariadne] could not load design:', err);
+      return;
+    }
+    const d = currentDesign;
+    const titleEl = $('.anchor-title');
+    const subEl   = $('.anchor-sub');
+    const fileEl  = $('.stage-readout .file');
+    const viewEl  = $('.stage-readout span:not(.file)');
+    if (titleEl && d.title) titleEl.textContent = d.title;
+    if (subEl && d.subtitle) subEl.textContent = d.subtitle;
+    if (fileEl && d.file) fileEl.textContent = d.file;
+    if (viewEl && d.view) viewEl.textContent = 'view: ' + d.view;
+    const texts = $$('.anchor-stage svg text');
+    (d.dimensions || []).forEach((dim, i) => {
+      if (texts[i]) texts[i].textContent =
+        dim.label === '⌀' ? '⌀ ' + dim.value : dim.value;
+    });
+  }
+  loadDesign();
 
   // ─── Help tooltips: click-to-pin + smart flip ────────────────────────
   // The panel is position:absolute below the trigger by default. If opening
